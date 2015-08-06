@@ -1,0 +1,22 @@
+Core Script: 
+max_vs_med_plot.R
+	- Plots the Max Absolute Deviation vs Median Absolute Deviation between 2 rarefactions (or dirichlet instances)
+	- Useful to visualize the amount of change in the shape of data after subsampling procedures
+
+
+
+
+
+Ancillary Scripts:
+generate_aitchison_data.R
+	- Expects a tab-delimited OTU table in the following format:
+	- Outputs different Dirichlet instances for each sample for plotting
+	
+	sampl1	sampl2	sampl3	...	sampln
+	OTU1	0	0	0	0	0
+	OTU2	0	0	0	0	0
+	OTU3	0	0	0	0	0
+	...	0	0	0	0	0
+	OTUn	0	0	0	0	0
+
+
