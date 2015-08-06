@@ -86,6 +86,10 @@ shapes <- c(20,20,20,20)
 colours <- c(rgb(1,0,0,0.5), rgb(0,1,0,0.5), rgb(0,0,1,0.5), rgb(0,0,0,0.5) )
 
 plot(0, xlim=c(0,xMax), ylim=c(0,yMax), xlab=xla, ylab=yla, main=tla)
+
+legend(x=xMax-0.03,y=0.1, legend=c("unweighted", "weighted", "bray_curtis", "aitchison"), pch=shapes,
+col=colours)
+
 for (i in 1:numAnalysis)
 {
 	points(listPlot[[i]][,1], listPlot[[i]][,2], pch=shapes[i], col=colours[i], cex=2)
