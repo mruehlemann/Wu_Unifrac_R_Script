@@ -1,3 +1,23 @@
+################################################################################
+#
+#	max_vs_med_plot.R
+#	Useful for visualizing differences between different analysis
+# 	Version 1.0
+#	
+#	Author: Jia Rong Wu
+#	jwu424@gmail.com
+#
+#	max_vs_med_plot.R is free software: you can redistribute it and/or modify
+#	it under the terms of the GNU General Public License as published by
+#	the Free Software Foundation, either version 3 of the License, or
+#	any later version.
+#	
+#	max_vs_med_plot.R is distributed in the hope that it will be useful,
+# 	but WITHOUT ANY WARRANTY; without even the implied warranty of
+# 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#	GNU General Public License for more details.
+################################################################################
+
 library(ALDEx2)
 library(vegan)
 library(ape)
@@ -21,10 +41,10 @@ for (i in 1:numAnalysis)
 	listPlot[[i]] <- data.frame(matrix("", ncol=2, nrow=numFiles), stringsAsFactors=FALSE)
 }
 
-
 ################################################################################
 #####								Analysis								####
 ################################################################################
+
 for (j in 1: numAnalysis)
 {
 	# Fetch the analysis data being plotted 
@@ -39,7 +59,7 @@ for (j in 1: numAnalysis)
 		fileName <- paste(folder,i,matrix,extension, sep="")	
 		analysis <- read.table(fileName, sep="\t", header=T, row.names=1)
 		
-		# Determine the extremes of the set of components
+		# Determine the extremes of the set of components (PC1)
 		# Using the extremes prevents any values from being > 1
 		tempMin <- min(analysis[1:numSamples,component])
 		minRange <- if(tempMin < minRange) tempMin else minRange
@@ -50,9 +70,9 @@ for (j in 1: numAnalysis)
 	weighted.range <- abs(minRange - maxRange)
 	
 	# Fetch the reference matrix to plot against for each analysis
-	# By default, the first rarefaction is the default reference
+	# By default, the first rarefaction/dirichlet instance  is the default reference
 	fileName = paste(folder,1,matrix,extension,sep="")
-	ref.plot <- read.table(fileName, sep="\t", header=T, row.names=1)	# analysis is reference
+	ref.plot <- read.table(fileName, sep="\t", header=T, row.names=1)
 	ref.plot <- ref.plot[1:numSamples,component]
 	
 	# Fetch every other value to plot
@@ -78,41 +98,19 @@ for (j in 1: numAnalysis)
 ################################################################################
 
 tla <- "Max Relative Deviation of Rarefactions vs Median Deviation"
-xla <- "Median Deviation"
-yla <- "Max Relative Deviation"
+xla <- "Median Relative Deviation (Vres)"
+yla <- "Max Relative Deviation (Vres)"
 
 # Increment here for insertion of values
 shapes <- c(20,20,20,20)
 colours <- c(rgb(1,0,0,0.5), rgb(0,1,0,0.5), rgb(0,0,1,0.5), rgb(0,0,0,0.5) )
 
 plot(0, xlim=c(0,xMax), ylim=c(0,yMax), xlab=xla, ylab=yla, main=tla)
-
-legend(x=xMax-0.03,y=0.1, legend=c("unweighted", "weighted", "bray_curtis", "aitchison"), pch=shapes,
+legend(x=xMax-0.03,y=0.1, legend=c("un_uniFrac", "w_uniFrac", "bray_curtis", "aitchison"), pch=shapes,
 col=colours)
 
+# Plot the points
 for (i in 1:numAnalysis)
 {
 	points(listPlot[[i]][,1], listPlot[[i]][,2], pch=shapes[i], col=colours[i], cex=2)
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	
-	
-	
-	

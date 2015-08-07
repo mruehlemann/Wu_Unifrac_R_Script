@@ -3,7 +3,16 @@ max_vs_med_plot.R
 	- Plots the Max Absolute Deviation vs Median Absolute Deviation between 2 rarefactions (or dirichlet instances)
 	- Useful to visualize the amount of change in the shape of data after subsampling procedures
 
+	- The calculation being performed is:
+	
+	Vres = |Vref - Vi| / max.range({V})
 
+		Vres = resultant vector containing relative deviation
+		Vref = refrence vector (usually PC1 of each analysis)
+		Vi = each additional PC1 from each rarefaction/dirichlet instance
+		{V} = set of ALL the PC1's for each analysis
+
+	- Resulting Plot is a representation of how subsampling affects each analysis
 
 
 
