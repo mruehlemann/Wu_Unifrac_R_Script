@@ -6,3 +6,6 @@
 *.Rout
 /UniFrac_Counterexample/Figures/*
 /UniFrac_Counterexample/Muscle/*
+.DS_Store
+.RData
+
