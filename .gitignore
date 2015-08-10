@@ -1,2 +1,8 @@
 /UniFrac_Counterexample/Data/*
 *.log
+*.fna
+*.pdf
+*.tex
+*.Rout
+/UniFrac_Counterexample/Figures/*
+/UniFrac_Counterexample/Muscle/*

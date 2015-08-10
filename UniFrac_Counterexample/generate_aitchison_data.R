@@ -20,13 +20,16 @@
 #	GNU General Public License for more details.
 ################################################################################
 
-otus <- t(read.table("RANDOM_otus_tongue_vs_tongue_60.txt", sep="\t", header=T, row.names=1))
+library(ALDEx2)
+library(GUniFrac)
+
+otus <- t(read.table("data/reads_Tongue_dorsum_60.txt", sep="\t", header=T, row.names=1))
 rownames(otus) <- gsub("^X","", rownames(otus))	# Clean up formatting
 otus <- as.data.frame(otus)
 clr.otus <- aldex.clr(otus, mc.samples=128)		# Generate CLR Data
 
 # Set up the folder names
-folder <- "ac_all_"
+folder <- "data/ait_all_"
 name <- "/atc_pc"
 ext <- ".txt"
 

@@ -21,6 +21,9 @@
 library(ALDEx2)
 library(vegan)
 library(ape)
+args=(commandArgs(TRUE))
+raref <- as.numeric(args[1])
+subsite <- as.character(args[2])
 
 component <- 1			# This is the component being examined (i.e. PC1)
 minRange <- 0			# Lower limit of values across each rarefaction
@@ -31,9 +34,8 @@ yMax <- 0				# Maximum y-axis of the plot
 numFiles <- 10			# Edit this number based on the number of rarefactions
 numSamples <- 60		# Edit this number based on number of samples you have
 numAnalysis <- 4		# Specifies the number of DIFFERENT analysis
-folders <- c("bdiv_all_r", "bdiv_all_r", "bc_all_", "ac_all_")
-matricies <- c("/unweighted_unifrac_pc", "/weighted_unifrac_pc", "/bray_curtis_pc", "/atc_pc")
-
+folders <- c("data/uni_all_", "data/uni_all_", "data/brc_all_", "data/ait_all_")
+matricies <- c("/unweighted_unifrac_pc", "/weighted_unifrac_pc", paste("/bdiv_even",raref,"/bray_curtis_pc",sep=""), "/atc_pc")
 # Create list of values in order to hold the plot information
 listPlot <- as.list (c(1:numAnalysis))
 for (i in 1:numAnalysis)
@@ -105,6 +107,10 @@ yla <- "Max Relative Deviation (Vres)"
 shapes <- c(20,20,20,20)
 colours <- c(rgb(1,0,0,0.5), rgb(0,1,0,0.5), rgb(0,0,1,0.5), rgb(0,0,0,0.5) )
 
+#dir.create("Figures")
+
+pdf(paste("Figures/MRD_vs_MD_",subsite,".pdf",sep=""))
+
 plot(0, xlim=c(0,xMax), ylim=c(0,yMax), xlab=xla, ylab=yla, main=tla)
 legend(x=xMax-0.03,y=0.1, legend=c("un_uniFrac", "w_uniFrac", "bray_curtis", "aitchison"), pch=shapes,
 col=colours)
@@ -114,3 +120,4 @@ for (i in 1:numAnalysis)
 {
 	points(listPlot[[i]][,1], listPlot[[i]][,2], pch=shapes[i], col=colours[i], cex=2)
 }
+dev.off()

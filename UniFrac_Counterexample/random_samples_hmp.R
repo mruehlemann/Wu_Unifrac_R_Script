@@ -18,12 +18,12 @@
 #	GNU General Public License for more details.
 #
 #	USAGE: 
-#	R CMD BATCH --no-save --no-restore '--args subsite subsamples' random_samples_hmp.R log_random_samples.log
+#	DEP=$(R --slave --no-save '--args subsite subsamples' < random_samples_hmp.R)
 #		subsite is the site you are extracting from
 #		subsamples is the number of samples you're drawing (must be even)
 #
 #	Example:
-#	R CMD BATCH --no-save --no-restore '--args Tongue_dorsum 60' random_samples_hmp.R log_random_samples_hmp.log
+#	DEP=$(R --slave --no-save '--args Tongue_dorsum 60' < random_samples_hmp.R)
 ################################################################################
 
 library(GUniFrac)
@@ -85,21 +85,38 @@ metaNames <- paste(dat,met,und,subsite,und,subsamples,ext,sep="")
 write.table( t(reads.sub.final), readNames, sep="\t", quote=F)
 write.table(meta.sub, metaNames, sep="\t", quote=F)
 
-
-# Rarefy and re-write files FOR WITHIN R
-#for (i in 1:10)
-#{
-#	reads.rare <- rrarefy(reads.sub.final, sample=min(mn))
-#	readNamesRare <- paste(dat,red,und,subsite,und,subsamples,und,"r",i,ext,sep="")
-#	write.table( t(reads.rare), readNamesRare, sep="\t", quote=F)
-#}
-
-
-
 # Implement a shell script to format the rep-set tree in order to generate for qiime
-#minimal <- read.table("rep_set_v13.fna", sep="\t", row.names=1, header=F)
-#minimal.sub <- minimal[rownames(td.sub.final),]
-#minimal.sub <- minimal.sub[complete.cases(minimal.sub),]
-#write.table(minimal.sub, "Random_selections_1/FIXED_rep_set_v13_minimal_final_100.fna", sep="\t", quote=F)
+minimal <- as.data.frame(read.table("data/rep_set_v35_modified.fna", sep="\t", row.names=1, header=F))
+minimal.sub <- as.data.frame(minimal[colnames(reads.sub.final),])
+rownames(minimal.sub) <- colnames(reads.sub.final)
+write.table(minimal.sub, "data/rep_set_v35_minimal_final_100.fna", sep="\t", quote=F, col.names=F)
+
+
+# Create directories for the output of files
+at <- "ait_all_"
+for (i in 1:10)
+{
+	dirName <- paste(dat,at,i,sep="")
+	dir.create(dirName)	
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
