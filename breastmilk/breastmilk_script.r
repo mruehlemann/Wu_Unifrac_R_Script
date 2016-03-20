@@ -1,5 +1,5 @@
+#!/usr/bin/env Rscript 
 options(error=recover)
-#pcoa test script
 
 library(ape)
 library(phangorn)
