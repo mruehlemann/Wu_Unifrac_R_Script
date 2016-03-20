@@ -48,7 +48,6 @@ all_distance_matrices <- getDistanceMatrix(breastmilk.otu.tab,breastmilk.tree,me
 
 weighted <- all_distance_matrices[["weighted"]]
 information <- all_distance_matrices[["information"]]
-ratio <- all_distance_matrices[["ratio"]]
 ratio_no_log <- all_distance_matrices[["ratio_no_log"]]
 
 groups <- rep("Not Infected",length(MyMetaOrdered$Gestation))
@@ -56,37 +55,6 @@ groups[which(rownames(MyMetaOrdered)=="S38I")] <- "Infected"
 groups <- as.factor(groups)
 
 otuSum <- apply(breastmilk.otu.tab,1,sum)
-
-# # change conditions so that samples which are more than 50% one taxa are colored by that taxa
-# otuMax <- apply(breastmilk.otu.tab,1,max)
-# otuWhichMax <- apply(breastmilk.otu.tab,1,which.max)
-# otuDominated <- which(otuMax > otuSum/2)
-
-
-# otuMaxTax <- taxonomy[otuWhichMax]
-# otuDominated <- c(otuDominated[which(as.numeric(otuMaxTax[otuDominated])==32)],otuDominated[which(as.numeric(otuMaxTax[otuDominated])==33)])
-
-# taxonomyGroups <- as.character(groups)
-# taxonomyGroups[otuDominated] <- as.character(otuMaxTax[otuDominated])
-# taxonomyGroups <- as.factor(taxonomyGroups)
-
-# groups <- taxonomyGroups
-
-# # assign appropriate names to single taxa dominated groups
-# newLevels <- levels(taxonomyGroups)
-# splittaxa <- strsplit(levels(taxonomyGroups),split=";")
-
-# for (i in 1:length(splittaxa)) {
-# 	if (length(splittaxa[[i]])>1) {
-# 		newLevels[i] <- paste("L.",splittaxa[[i]][length(splittaxa[[i]])])
-# 	}
-# 	else {
-# 		newLevels[i] <- splittaxa[[i]][1]
-# 	}
-# }
-
-# levels(taxonomyGroups) <- newLevels
-
 
 # caculate pcoa vectors
 unweighted.pcoa <- pcoa(unweighted)
