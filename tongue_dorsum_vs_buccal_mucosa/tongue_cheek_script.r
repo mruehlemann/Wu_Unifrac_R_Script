@@ -4,12 +4,12 @@ options(error=recover)
 #this script prints out PDF pcoa plots and distance matrices, given an OTU table, phylogenetic tree, and metadata
 # run: nohup Rscript ./tongue_cheek_script.r > tongue_cheek_script_nohup.out 2>&1&
 
-source("UniFrac.r")
+source("../UniFrac.r")
 library(ape)
 library(phangorn)
 library(vegan)
 
-otu.tab <- read.table("data/tongue_cheek_data/hmp_tongue_cheek_data.txt", header=T, sep="\t", row.names=1, comment.char="", check.names=FALSE)
+otu.tab <- read.table("data/hmp_tongue_cheek_data.txt", header=T, sep="\t", row.names=1, comment.char="", check.names=FALSE)
 
 #remove taxonomy column to make otu count matrix numeric
 taxonomy <- rownames(otu.tab)
@@ -22,7 +22,7 @@ taxonomy <- taxonomy[taxaOrder]
 otu.tab <- otu.tab[,taxaOrder]
 
 # read and root tree (rooted tree is required)
-tree <- read.tree("data/tongue_cheek_data/hmp_tongue_cheek_subtree.tre")
+tree <- read.tree("data/hmp_tongue_cheek_subtree.tre")
 tree <- midpoint(tree)
 
 # read metadata
@@ -34,20 +34,20 @@ otu.tab.rarefy <- rrarefy(otu.tab, min(apply(otu.tab,1,sum)))
 
 # do Unweighted UniFrac separately with rarefied data
 unweighted <- getDistanceMatrix(otu.tab.rarefy,tree,method="unweighted",verbose=TRUE)
-write.table(unweighted,file="tongue_cheek_output/unweighted_distance_matrix.txt",sep="\t",quote=FALSE)
+write.table(unweighted,file="output/unweighted_distance_matrix.txt",sep="\t",quote=FALSE)
 
 #calculate distance matrix
 all_distance_matrices <- getDistanceMatrix(otu.tab,tree,method="all",verbose=TRUE)
 
 #output distance matrices
 weighted <- all_distance_matrices[["weighted"]]
-write.table(weighted,file="tongue_cheek_output/weighted_distance_matrix.txt",sep="\t",quote=FALSE)
+write.table(weighted,file="output/weighted_distance_matrix.txt",sep="\t",quote=FALSE)
 information <- all_distance_matrices[["information"]]
-write.table(information,file="tongue_cheek_output/information_distance_matrix.txt",sep="\t",quote=FALSE)
+write.table(information,file="output/information_distance_matrix.txt",sep="\t",quote=FALSE)
 ratio <- all_distance_matrices[["ratio"]]
-write.table(ratio,file="tongue_cheek_output/ratio_normalize_distance_matrix.txt",sep="\t",quote=FALSE)
+write.table(ratio,file="output/ratio_normalize_distance_matrix.txt",sep="\t",quote=FALSE)
 ratio_no_log <- all_distance_matrices[["ratio_no_log"]]
-write.table(ratio_no_log,file="tongue_cheek_output/ratio_no_log_normalize_distance_matrix.txt",sep="\t",quote=FALSE)
+write.table(ratio_no_log,file="output/ratio_no_log_normalize_distance_matrix.txt",sep="\t",quote=FALSE)
 
 # unweighted <- read.table("tongue_cheek_output/unweighted_distance_matrix.txt", sep = "\t", header = TRUE, row.names=1, quote = "")
 # weighted <- read.table("tongue_cheek_output/weighted_distance_matrix.txt", sep = "\t", header = TRUE, row.names=1, quote = "")
@@ -125,7 +125,7 @@ taxonomyGroups <- as.factor(c("Cheek", "Tongue"))
 palette(c("black", "blue", "red"))
 dev.off()
 
-pdf("tongue_cheek_output/pcoa_plots.pdf")
+pdf("output/pcoa_plots.pdf")
 par(oma=c(1,1,1,5))
 #plot pcoa plots
 plot(unweighted.pcoa$vectors[,1],unweighted.pcoa$vectors[,2], col=groups,main="Unweighted UniFrac\nprincipal coordinates analysis",xlab=paste("First Coordinate", round(unweighted.varEx[1],digits=3),"variance explained"),ylab=paste("Second Coordinate", round(unweighted.varEx[2],digits=3),"variance explained"),pch=19,cex.lab=1.4,cex.main=2)
@@ -153,7 +153,7 @@ dev.off()
 library(ALDEx2)
 library(compositions)
 
-otu.tab <- read.table("data/tongue_cheek_data/hmp_tongue_cheek_data.txt", header=T, sep="\t", row.names=1, comment.char="", check.names=FALSE)
+otu.tab <- read.table("data/hmp_tongue_cheek_data.txt", header=T, sep="\t", row.names=1, comment.char="", check.names=FALSE)
 
 groups <- colnames(otu.tab)
 groups <- gsub("_.*$","",groups)
@@ -177,11 +177,11 @@ sum(pcx$sdev[2]^2)/mvar(clr)
 sum(pcx$sdev[3]^2)/mvar(clr)
 # [1] 0.0477463
 
-save(pcx,file="tongue_cheek_output/biplot_data.rdat")
+save(pcx,file="output/biplot_data.rdat")
 ## load with
 # load(file="tongue_cheek_output/biplot_data.rdat")
 
-pdf("tongue_cheek_output/biplot.pdf")
+pdf("output/biplot.pdf")
 biplot(pcx, cex=0.6, col=c("black", "red"), scale=0, arrow.len=0, var.axes=F)
 dev.off()
 
