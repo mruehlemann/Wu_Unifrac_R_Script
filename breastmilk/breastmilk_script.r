@@ -10,10 +10,10 @@ library(vegan)
 # get default par
 plotParameters <- par()
 
-source("UniFrac.r")
+source("../UniFrac.r")
 
 # read OTU table and format appropriately for input into UniFrac methods
-breastmilk.otu.tab <- read.table("./data/camilla_data/td_OTU_tag_mapped_lineage.txt", header=T, sep="\t", row.names=1, comment.char="", check.names=FALSE)
+breastmilk.otu.tab <- read.table("./data/td_OTU_tag_mapped_lineage.txt", header=T, sep="\t", row.names=1, comment.char="", check.names=FALSE)
 
 #remove taxonomy column to make otu count matrix numeric
 taxonomy <- breastmilk.otu.tab$taxonomy
@@ -27,11 +27,11 @@ breastmilk.otu.tab <- breastmilk.otu.tab[,taxaOrder]
 breastmilk.otu.tab.rarefy <- rrarefy(breastmilk.otu.tab, min(apply(breastmilk.otu.tab,1,sum)))
 
 # read and root tree (rooted tree is required)
-breastmilk.tree <- read.tree("./data/camilla_data/fasttree_all_seed_OTUs.tre")
+breastmilk.tree <- read.tree("./data/fasttree_all_seed_OTUs.tre")
 breastmilk.tree <- midpoint(breastmilk.tree)
 
 # read metadata
-MyMeta<- read.table("./data/camilla_data/metadata.txt", header=T, sep="\t", row.names=1, comment.char="", check.names=FALSE)
+MyMeta<- read.table("./data/metadata.txt", header=T, sep="\t", row.names=1, comment.char="", check.names=FALSE)
 
 #remove infected sample S38I
 #MyMeta <- MyMeta[(which(rownames(MyMeta)!="S38I")),]
@@ -120,7 +120,7 @@ ratio_no_log.pc1.varEx <- sd(ratio_no_log.pcoa$vector[,1])*sd(ratio_no_log.pcoa$
 ratio_no_log.pc2.varEx <- sd(ratio_no_log.pcoa$vector[,2])*sd(ratio_no_log.pcoa$vector[,2])/ratio_no_log.varExplained
 
 #save plots as PDF
-pdf("breastmilk_output/efficient_unifrac_breastmilk_pcoa_plots_infected.pdf")
+pdf("output/efficient_unifrac_breastmilk_pcoa_plots_infected.pdf")
 
 
 # # MAKE BAR PLOTS
