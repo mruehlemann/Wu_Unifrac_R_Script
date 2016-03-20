@@ -4,6 +4,7 @@ options(error=recover)
 library(ape)
 library(phangorn)
 library(vegan)
+library(randomcoloR)
 
 # commenting out incorrect clr dirichlet
 
@@ -113,11 +114,12 @@ prop <- t(apply(breastmilk.otu.tab,1,function(x) x/sum(x)))
 # plot dendogram with bar plots
 
 par(mar=c(2,1,1,1)+0.1)
+# generate taxa colors
+colors <- distinctColorPalette(length(taxonomy))
 
 layout(matrix(c(1,3,2,3),2,2, byrow=T), widths=c(6,4), height=c(4,4))
 plot(unweighted.dendo, axes=F, ylab=NULL, ann=F, hang=-1,cex=0.5)
 #order the barplot 
-colors <- c("steelblue3","skyblue1", "indianred1", "mediumpurple1", "olivedrab3", "pink", "#FFED6F", "mediumorchid3", "ivory2", "tan1", "aquamarine3", "#C0C0C0", "royalblue4", "mediumvioletred", "#999933", "#666699", "#CC9933", "#006666", "#3399FF", "#993300", "#CCCC99", "#666666", "#FFCC66", "#6699CC", "#663366", "#9999CC", "#CCCCCC", "#669999", "#CCCC66", "#CC6600", "bisque", "#9999FF", "#0066CC", "#99CCCC", "#999999", "#FFCC00", "#009999", "#FF9900", "#999966", "#66CCCC", "#339966", "#CCCC33", "#EDEDED")
 barplot(t(prop[unweighted.dendo$order,]), space=0,col=colors, las=2)
 plot(1,2, pch = 1, lty = 1, ylim=c(-20,20), type = "n", axes = FALSE, ann = FALSE)
 legend(x="center", legend=taxonomy, col=colors, lwd=5, cex=.5, border=NULL,ncol=2)
