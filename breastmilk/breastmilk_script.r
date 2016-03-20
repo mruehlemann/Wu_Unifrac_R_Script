@@ -131,24 +131,6 @@ pdf("output/efficient_unifrac_breastmilk_pcoa_plots_infected.pdf")
 #choose colors for each condition
 palette(c("red","black","cyan","dodgerblue","blue","orange"))
 
-#plot pcoa plots with legend
-plot(unweighted.pcoa$vectors[,1],unweighted.pcoa$vectors[,2], type="p",col=groups,main="Unweighted UniFrac\nprincipal coordinate analysis",xlab=paste("First Coordinate", round(unweighted.pc1.varEx,digits=3),"variance explained"),ylab=paste("Second Coordinate", round(unweighted.pc2.varEx,digits=3),"variance explained"),pch=19,cex.lab=1.4,cex.main=2)
-#placement with S38I included
-#legend(-0.1,-0.055,levels(groups),col=palette(),pch=19)
-# #placement with S38I excluded
-# legend(0.055,0.15,levels(groups),col=palette(),pch=19)
-
-plot(weighted.pcoa$vectors[,1],weighted.pcoa$vectors[,2], col=groups,main="Weighted UniFrac\nprincipal coordinate analysis",xlab=paste("First Coordinate", round(weighted.pc1.varEx,digits=3),"variance explained"),ylab=paste("Second Coordinate", round(weighted.pc2.varEx,digits=3),"variance explained"),pch=19,cex.lab=1.4,cex.main=2)
-#legend(-0.1,-0.12,levels(groups),col=palette(),pch=19)
-
-plot(information.pcoa$vectors[,1],information.pcoa$vectors[,2], col=groups,main="Information UniFrac\nprincipal coordinate analysis",xlab=paste("First Coordinate", round(information.pc1.varEx,digits=3),"variance explained"),ylab=paste("Second Coordinate", round(information.pc2.varEx,digits=3),"variance explained"),pch=19,cex.lab=1.4,cex.main=2)
-#placement with S38I included
-#legend(-0.15,-0.4,levels(groups),col=palette(),pch=19)
-# #placement with S38I excluded
-# legend(0.4,-0.15,levels(groups),col=palette(),pch=19)
-
-plot(ratio_no_log.pcoa$vectors[,1],ratio_no_log.pcoa$vectors[,2], col=groups,main="Centered Ratio UniFrac\nprincipal coordinate analysis",xlab=paste("First Coordinate", round(ratio_no_log.pc1.varEx,digits=3),"variance explained"),ylab=paste("Second Coordinate", round(ratio_no_log.pc2.varEx,digits=3),"variance explained"),pch=19,cex.lab=1.4,cex.main=2)
-
 # # BIPLOT
 # 
 # otuSum <- apply(breastmilk.otu.tab,1,sum)
