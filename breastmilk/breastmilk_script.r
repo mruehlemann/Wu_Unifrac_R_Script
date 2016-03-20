@@ -60,14 +60,12 @@ otuSum <- apply(breastmilk.otu.tab,1,sum)
 unweighted.pcoa <- pcoa(unweighted)
 weighted.pcoa <- pcoa(weighted)
 information.pcoa <- pcoa(information)
-ratio.pcoa <- pcoa(ratio)
 ratio_no_log.pcoa <- pcoa(ratio_no_log)
 
 # calculate total variance explained
 unweighted.varExplained <- sum(apply(unweighted.pcoa$vector,2,function(x) sd(x)*sd(x)))
 weighted.varExplained <- sum(apply(weighted.pcoa$vector,2,function(x) sd(x)*sd(x)))
 information.varExplained <- sum(apply(information.pcoa$vector,2,function(x) sd(x)*sd(x)))
-ratio.varExplained <- sum(apply(ratio.pcoa$vector,2,function(x) sd(x)*sd(x)))
 ratio_no_log.varExplained <- sum(apply(ratio_no_log.pcoa$vector,2,function(x) sd(x)*sd(x)))
 
 # calculate proportion of variance explained by First Coordinate
@@ -80,9 +78,6 @@ weighted.pc2.varEx <- sd(weighted.pcoa$vector[,2])*sd(weighted.pcoa$vector[,2])/
 
 information.pc1.varEx <- sd(information.pcoa$vector[,1])*sd(information.pcoa$vector[,1])/information.varExplained
 information.pc2.varEx <- sd(information.pcoa$vector[,2])*sd(information.pcoa$vector[,2])/information.varExplained
-
-ratio.pc1.varEx <- sd(ratio.pcoa$vector[,1])*sd(ratio.pcoa$vector[,1])/ratio.varExplained
-ratio.pc2.varEx <- sd(ratio.pcoa$vector[,2])*sd(ratio.pcoa$vector[,2])/ratio.varExplained
 
 ratio_no_log.pc1.varEx <- sd(ratio_no_log.pcoa$vector[,1])*sd(ratio_no_log.pcoa$vector[,1])/ratio_no_log.varExplained
 ratio_no_log.pc2.varEx <- sd(ratio_no_log.pcoa$vector[,2])*sd(ratio_no_log.pcoa$vector[,2])/ratio_no_log.varExplained
@@ -151,8 +146,6 @@ plot(information.pcoa$vectors[,1],information.pcoa$vectors[,2], col=groups,main=
 #legend(-0.15,-0.4,levels(groups),col=palette(),pch=19)
 # #placement with S38I excluded
 # legend(0.4,-0.15,levels(groups),col=palette(),pch=19)
-
-plot(ratio.pcoa$vectors[,1],ratio.pcoa$vectors[,2], col=groups,main="ratio UniFrac\nprincipal coordinate analysis",xlab=paste("First Coordinate", round(ratio.pc1.varEx,digits=3),"variance explained"),ylab=paste("Second Coordinate", round(ratio.pc2.varEx,digits=3),"variance explained"),pch=19,cex.lab=1.4,cex.main=2)
 
 plot(ratio_no_log.pcoa$vectors[,1],ratio_no_log.pcoa$vectors[,2], col=groups,main="Centered Ratio UniFrac\nprincipal coordinate analysis",xlab=paste("First Coordinate", round(ratio_no_log.pc1.varEx,digits=3),"variance explained"),ylab=paste("Second Coordinate", round(ratio_no_log.pc2.varEx,digits=3),"variance explained"),pch=19,cex.lab=1.4,cex.main=2)
 
