@@ -8,6 +8,7 @@ source("../UniFrac.r")
 library(ape)
 library(phangorn)
 library(vegan)
+library(stringr)
 
 otu.tab <- read.table("data/hmp_tongue_cheek_data.txt", header=T, sep="\t", row.names=1, comment.char="", check.names=FALSE)
 
@@ -16,14 +17,27 @@ taxonomy <- rownames(otu.tab)
 #make row names samples, and col names OTUs
 otu.tab <- t(as.matrix(otu.tab))
 
+# filter out taxa that are less than 1% abundant in all samples
+sample.sum <- apply(otu.tab,1,sum)
+one.percent <- sample.sum*0.01
+otus.greater <- apply(otu.tab,2,function(x) length(which(x > one.percent)))
+otu.tab <- otu.tab[,which(otus.greater > 0)]
+
+tree <- read.tree("data/hmp_tongue_cheek_subtree.tre")
+
+# remove extra taxa from tree
+absent <- tree$tip.label[!(tree$tip.label %in% colnames(otu.tab))]
+if (length(absent) != 0) {
+		tree <- drop.tip(tree, absent)
+}
+
+# root tree (rooted tree is required)
+tree <- midpoint(tree)
+
 #sort taxa from most to least abundant
 taxaOrder <- rev(order(apply(otu.tab,2,sum)))
 taxonomy <- taxonomy[taxaOrder]
 otu.tab <- otu.tab[,taxaOrder]
-
-# read and root tree (rooted tree is required)
-tree <- read.tree("data/hmp_tongue_cheek_subtree.tre")
-tree <- midpoint(tree)
 
 # read metadata
 MyMetaOrdered <- rownames(otu.tab)
@@ -79,7 +93,11 @@ information.vector <- unlist(information[lower.tri(information,diag=TRUE)])
 ratio_no_log.vector <- unlist(ratio_no_log[lower.tri(ratio_no_log,diag=TRUE)])
 
 # replace abbreviations with full body site names (there aren't actually any dominant taxa in this data set)
-taxonomyGroups <- as.factor(c("Cheek", "Tongue"))
+taxonomyGroups <- as.factor(c("Buccal Mucosa", "Tongue Dorsum"))
+groups <- str_extract(rownames(otu.tab),"^[a-z]*")
+groups[which(groups=="bm")] <- "Buccal Mucosa"
+groups[which(groups=="td")] <- "Tongue Dorsum"
+groups <- as.factor(groups)
 
 palette(c("black", "blue", "red"))
 dev.off()
@@ -101,7 +119,7 @@ plot(unweighted.vector,information.vector,main="unweighted vs. information UniFr
 plot(weighted.vector,information.vector,main="weighted vs. information UniFrac")
 plot(unweighted.vector,weighted.vector,main="unweighted vs. weighted UniFrac")
 plot(ratio_no_log.vector,weighted.vector,main="normalized no log ratio vs. weighted UniFrac")
-plot(braycurtis.vector,weighted.vector,main="normalized no log ratio vs. weighted UniFrac")
+# plot(braycurtis.vector,weighted.vector,main="normalized no log ratio vs. weighted UniFrac")
 
 dev.off()
 
