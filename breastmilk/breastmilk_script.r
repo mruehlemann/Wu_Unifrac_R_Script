@@ -59,6 +59,14 @@ weighted <- all_distance_matrices[["weighted"]]
 information <- all_distance_matrices[["information"]]
 ratio_no_log <- all_distance_matrices[["ratio_no_log"]]
 
+# create bray curtis dist object using vegan, and turn into distance matrix
+braycurtis.vegdist <- vegdist(breastmilk.otu.tab,method="bray")
+braycurtis <- matrix(nrow=nrow(breastmilk.otu.tab),ncol=nrow(breastmilk.otu.tab))
+braycurtis[lower.tri(braycurtis)] <- braycurtis.vegdist
+diag(braycurtis) <- 0
+braycurtis.vegdist <- vegdist(breastmilk.otu.tab,method="bray",upper=TRUE)
+braycurtis[upper.tri(braycurtis)] <- braycurtis.vegdist
+
 groups <- rep("Not Infected",length(MyMetaOrdered$Gestation))
 groups[which(rownames(MyMetaOrdered)=="S38I")] <- "Infected"
 groups <- as.factor(groups)
@@ -70,12 +78,17 @@ unweighted.pcoa <- pcoa(unweighted)
 weighted.pcoa <- pcoa(weighted)
 information.pcoa <- pcoa(information)
 ratio_no_log.pcoa <- pcoa(ratio_no_log)
+braycurtis.pcoa <- list()
+braycurtis.pcoa$vectors <- cmdscale(braycurtis,k=nrow(breastmilk.otu.tab)-1,add=TRUE)$points
+rownames(braycurtis.pcoa$vectors) <- rownames(breastmilk.otu.tab)
+colnames(braycurtis.pcoa$vectors) <- paste("Axis",c(1:ncol(braycurtis.pcoa$vectors)),sep='.')
 
 # calculate total variance explained
 unweighted.varExplained <- sum(apply(unweighted.pcoa$vector,2,function(x) sd(x)*sd(x)))
 weighted.varExplained <- sum(apply(weighted.pcoa$vector,2,function(x) sd(x)*sd(x)))
 information.varExplained <- sum(apply(information.pcoa$vector,2,function(x) sd(x)*sd(x)))
 ratio_no_log.varExplained <- sum(apply(ratio_no_log.pcoa$vector,2,function(x) sd(x)*sd(x)))
+braycurtis.varExplained <- sum(apply(braycurtis.pcoa$vector,2,function(x) sd(x)*sd(x)))
 
 # calculate proportion of variance explained by First Coordinate
 unweighted.pc1.varEx <- sd(unweighted.pcoa$vector[,1])*sd(unweighted.pcoa$vector[,1])/unweighted.varExplained
@@ -91,6 +104,9 @@ information.pc2.varEx <- sd(information.pcoa$vector[,2])*sd(information.pcoa$vec
 ratio_no_log.pc1.varEx <- sd(ratio_no_log.pcoa$vector[,1])*sd(ratio_no_log.pcoa$vector[,1])/ratio_no_log.varExplained
 ratio_no_log.pc2.varEx <- sd(ratio_no_log.pcoa$vector[,2])*sd(ratio_no_log.pcoa$vector[,2])/ratio_no_log.varExplained
 
+braycurtis.pc1.varEx <- sd(braycurtis.pcoa$vector[,1])*sd(braycurtis.pcoa$vector[,1])/braycurtis.varExplained
+braycurtis.pc2.varEx <- sd(braycurtis.pcoa$vector[,2])*sd(braycurtis.pcoa$vector[,2])/braycurtis.varExplained
+
 #save plots as PDF
 pdf("output/breastmilk_pcoa_plots.pdf")
 
@@ -101,12 +117,14 @@ unweighted.dist <- as.dist(unweighted)
 weighted.dist <- as.dist(weighted)
 information.dist <- as.dist(information)
 ratio_no_log.dist <- as.dist(ratio_no_log)
+braycurtis.dist <- as.dist(braycurtis)
 
 #"average" is most similar to UPGMA, apparently
 unweighted.dendo <- hclust(unweighted.dist, method="average")
 weighted.dendo <- hclust(weighted.dist, method="average")
 information.dendo <- hclust(information.dist, method="average")
 ratio_no_log.dendo <- hclust(ratio_no_log.dist, method="average")
+braycurtis.dendo <- hclust(braycurtis.dist, method="average")
 
 #get otu proportions for barplot
 prop <- t(apply(breastmilk.otu.tab,1,function(x) x/sum(x)))
@@ -142,6 +160,11 @@ barplot(t(prop[ratio_no_log.dendo$order,]), space=0,col=colors, las=2, cex.names
 plot(1,2, pch = 1, lty = 1, ylim=c(-20,20), type = "n", axes = FALSE, ann = FALSE)
 legend(x="center", legend=taxonomy, col=colors, lwd=5, cex=.5, border=NULL,ncol=2)
 
+layout(matrix(c(1,3,2,3),2,2, byrow=T), widths=c(6,4), height=c(4,4))
+plot(braycurtis.dendo, axes=F, ylab=NULL, ann=F, hang=-1,cex=0.5)
+barplot(t(prop[braycurtis.dendo$order,]), space=0,col=colors, las=2, cex.names=0.5)
+plot(1,2, pch = 1, lty = 1, ylim=c(-20,20), type = "n", axes = FALSE, ann = FALSE)
+legend(x="center", legend=taxonomy, col=colors, lwd=5, cex=.5, border=NULL,ncol=2)
 
 par(plotParameters)
 
@@ -167,5 +190,7 @@ plot(information.pcoa$vectors[,1],information.pcoa$vectors[,2], col=groups,main=
 # legend(0.4,-0.15,levels(groups),col=palette(),pch=19)
 
 plot(ratio_no_log.pcoa$vectors[,1],ratio_no_log.pcoa$vectors[,2], col=groups,main="Centered Ratio UniFrac\nprincipal coordinate analysis",xlab=paste("First Coordinate", round(ratio_no_log.pc1.varEx,digits=3),"variance explained"),ylab=paste("Second Coordinate", round(ratio_no_log.pc2.varEx,digits=3),"variance explained"),pch=19,cex.lab=1.4,cex.main=2)
+
+plot(braycurtis.pcoa$vectors[,1],braycurtis.pcoa$vectors[,2], col=groups,main="Bray Curtis Dissimilarity\nprincipal coordinate analysis",xlab=paste("First Coordinate", round(braycurtis.pc1.varEx,digits=3),"variance explained"),ylab=paste("Second Coordinate", round(braycurtis.pc2.varEx,digits=3),"variance explained"),pch=19,cex.lab=1.4,cex.main=2)
 
 dev.off()
