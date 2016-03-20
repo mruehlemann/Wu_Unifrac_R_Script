@@ -83,7 +83,7 @@ ratio_no_log.pc1.varEx <- sd(ratio_no_log.pcoa$vector[,1])*sd(ratio_no_log.pcoa$
 ratio_no_log.pc2.varEx <- sd(ratio_no_log.pcoa$vector[,2])*sd(ratio_no_log.pcoa$vector[,2])/ratio_no_log.varExplained
 
 #save plots as PDF
-pdf("output/efficient_unifrac_breastmilk_pcoa_plots_infected.pdf")
+pdf("output/breastmilk_pcoa_plots.pdf")
 
 
 # # MAKE BAR PLOTS
