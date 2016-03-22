@@ -10,7 +10,7 @@ library(phangorn)
 library(vegan)
 library(stringr)
 
-otu.tab <- read.table("data/hmp_tongue_cheek_data.txt", header=T, sep="\t", row.names=1, comment.char="", check.names=FALSE)
+otu.tab <- read.table("../data/tongue_dorsum_vs_buccal_mucosa/hmp_tongue_cheek_data.txt", header=T, sep="\t", row.names=1, comment.char="", check.names=FALSE)
 
 #remove taxonomy column to make otu count matrix numeric
 taxonomy <- rownames(otu.tab)
@@ -23,7 +23,7 @@ one.percent <- sample.sum*0.01
 otus.greater <- apply(otu.tab,2,function(x) length(which(x > one.percent)))
 otu.tab <- otu.tab[,which(otus.greater > 0)]
 
-tree <- read.tree("data/hmp_tongue_cheek_subtree.tre")
+tree <- read.tree("../data/tongue_dorsum_vs_buccal_mucosa/hmp_tongue_cheek_subtree.tre")
 
 # remove extra taxa from tree
 absent <- tree$tip.label[!(tree$tip.label %in% colnames(otu.tab))]
