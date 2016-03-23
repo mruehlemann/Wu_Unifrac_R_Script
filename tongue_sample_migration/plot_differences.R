@@ -2,8 +2,18 @@
 # Plots a set of 30 tongue samples vs 30 tongue samples
 # Should be no differences, but there's a difference in the sets of 
 
-d <- read.table("Rare1_659/bdiv_all_r659_original/unweighted_unifrac_pc.txt", header=T, row.names=1, sep="\t")
-e <- read.table("Rare2_659/bdiv_all_r659_original/unweighted_unifrac_pc.txt", header=T, row.names=1, sep="\t")
+# read data
+original.data <- read.table("../data/tongue_dorsum/tongue_vs_tongue_30_forR.txt",sep="\t",check.names=FALSE,quote="",comment.char="", header=TRUE,row.names=1)
+
+# remove all OTUs with zero counts across all samples (this data set should have a min. of 100 counts per OTU, but this code is here just in case.)
+otu.sum <- apply(original.data,1,sum)
+original.data <- original.data[which(otu.sum > 0),]
+otu.sum <- otu.sum[which(otu.sum>0)]
+
+original.data <- t(original.data)
+
+d <- rrarefy(original.data, min(otu.sum))
+e <- rrarefy(original.data, min(otu.sum))
 
 # Rudimentary procrustes analysis 
 # Correct for the shape (eigenvalues) (ONLY FOR DATASETS THAT ARE FLIPPED ABOUT X AND Y AXIS
