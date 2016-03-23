@@ -7,32 +7,47 @@ source("../UniFrac.r")
 # read data
 original.tongue.data <- read.table("../data/tongue_dorsum/tongue_vs_tongue_30_forR.txt",sep="\t",check.names=FALSE,quote="",comment.char="", header=TRUE,row.names=1)
 tongue.tree <- read.tree("../data/tongue_dorsum/fasttree_all_seed_OTUs.tre")
-original.tongue.cheek.data <- read.table("../data/tongue_dorsum_vs_buccal_mucosa/hmp_tongue_heek_data.txt",sep="\t",check.names=FALSE,quote="",comment.char="", header=TRUE,row.names=1)
+original.tongue.cheek.data <- read.table("../data/tongue_dorsum_vs_buccal_mucosa/hmp_tongue_cheek_data.txt",sep="\t",check.names=FALSE,quote="",comment.char="", header=TRUE,row.names=1)
 tongue.cheek.tree <- read.tree("../data/tongue_dorsum_vs_buccal_mucosa/hmp_tongue_cheek_subtree.tre")
 
 # remove all OTUs with zero counts across all samples (this data set should have a min. of 100 counts per OTU, but this code is here just in case.)
-otu.sum <- apply(original.tongue.data,1,sum)
-original.tongue.data <- original.tongue.data[which(otu.sum > 0),]
-otu.sum <- otu.sum[which(otu.sum>0)]
+tongue.otu.sum <- apply(original.tongue.data,1,sum)
+original.tongue.data <- original.tongue.data[which(tongue.otu.sum > 0),]
+tongue.otu.sum <- tongue.otu.sum[which(tongue.otu.sum>0)]
+
+tongue.cheek.otu.sum <- apply(original.tongue.cheek.data,1,sum)
+original.tongue.cheek.data <- original.tongue.cheek.data[which(tongue.cheek.otu.sum > 0),]
+tongue.cheek.otu.sum <- tongue.cheek.otu.sum[which(tongue.cheek.otu.sum>0)]
 
 # make sure tree tip names match OTU names by taking out single quotes
 tongue.tree$tip.label <- gsub("'","",tongue.tree$tip.label)
+tongue.cheek.tree$tip.label <- gsub("'","",tongue.cheek.tree$tip.label)
+
 # remove OTUs that are not in the tree
 original.tongue.data <- original.tongue.data[which(rownames(original.tongue.data) %in% tongue.tree$tip.label),]
+original.tongue.cheek.data <- original.tongue.cheek.data[which(rownames(original.tongue.cheek.data) %in% tongue.cheek.tree$tip.label),]
 
 original.tongue.data <- t(original.tongue.data)
+original.tongue.cheek.data <- t(original.tongue.cheek.data)
 
 # remove extra taxa from tree
 absent <- tongue.tree$tip.label[!(tongue.tree$tip.label %in% colnames(original.tongue.data))]
 if (length(absent) != 0) {
 		tongue.tree <- drop.tip(tongue.tree, absent)
 }
+absent <- tongue.cheek.tree$tip.label[!(tongue.cheek.tree$tip.label %in% colnames(original.tongue.cheek.data))]
+if (length(absent) != 0) {
+		tongue.cheek.tree <- drop.tip(tongue.cheek.tree, absent)
+}
 
 # root tree (rooted tree is required)
 tongue.tree <- midpoint(tongue.tree)
+tongue.cheek.tree <- midpoint(tongue.cheek.tree)
 
-d.tongue.data <- rrarefy(original.tongue.data, min(otu.sum))
-e.tongue.data <- rrarefy(original.tongue.data, min(otu.sum))
+d.tongue.data <- rrarefy(original.tongue.data, min(tongue.otu.sum))
+e.tongue.data <- rrarefy(original.tongue.data, min(tongue.otu.sum))
+d.tongue.cheek.data <- rrarefy(original.tongue.cheek.data, min(tongue.cheek.otu.sum))
+e.tongue.cheek.data <- rrarefy(original.tongue.cheek.data, min(tongue.cheek.otu.sum))
 
 d.tongue.otu.sum <- apply(d.tongue.data,2,sum)
 d.tongue.data <- d.tongue.data[,which(d.tongue.otu.sum > 0)]
@@ -50,11 +65,32 @@ if (length(absent) != 0) {
 		e.tongue.tree <- drop.tip(e.tongue.tree, absent)
 }
 
+d.tongue.cheek.otu.sum <- apply(d.tongue.cheek.data,2,sum)
+d.tongue.cheek.data <- d.tongue.cheek.data[,which(d.tongue.cheek.otu.sum > 0)]
+d.tongue.cheek.tree <- tongue.cheek.tree
+absent <- d.tongue.cheek.tree$tip.label[!(d.tongue.cheek.tree$tip.label %in% colnames(d.tongue.cheek.data))]
+if (length(absent) != 0) {
+		d.tongue.cheek.tree <- drop.tip(d.tongue.cheek.tree, absent)
+}
+
+e.tongue.cheek.otu.sum <- apply(e.tongue.cheek.data,2,sum)
+e.tongue.cheek.data <- e.tongue.cheek.data[,which(e.tongue.cheek.otu.sum > 0)]
+e.tongue.cheek.tree <- tongue.cheek.tree
+absent <- e.tongue.cheek.tree$tip.label[!(e.tongue.cheek.tree$tip.label %in% colnames(e.tongue.cheek.data))]
+if (length(absent) != 0) {
+		e.tongue.cheek.tree <- drop.tip(e.tongue.cheek.tree, absent)
+}
+
+
 d.tongue.unifrac <- getDistanceMatrix(d.tongue.data,d.tongue.tree,method="unweighted",verbose=TRUE)
 e.tongue.unifrac <- getDistanceMatrix(e.tongue.data,e.tongue.tree,method="unweighted",verbose=TRUE)
+d.tongue.cheek.unifrac <- getDistanceMatrix(d.tongue.cheek.data,d.tongue.cheek.tree,method="unweighted",verbose=TRUE)
+e.tongue.cheek.unifrac <- getDistanceMatrix(e.tongue.cheek.data,e.tongue.cheek.tree,method="unweighted",verbose=TRUE)
 
 d.tongue <- pcoa(d.tongue.unifrac)
 e.tongue <- pcoa(e.tongue.unifrac)
+d.tongue.cheek <- pcoa(d.tongue.cheek.unifrac)
+e.tongue.cheek <- pcoa(e.tongue.cheek.unifrac)
 
 #function to get variance explained for the PCOA component labels
 getVarExplained <- function(vector) {
@@ -140,6 +176,7 @@ plotMigration <- function(d,e) {
 pdf("UniFrac_tvst_movement.pdf")	# Comment out if not plotting
 
 plotMigration(d.tongue,e.tongue)
+plotMigration(d.tongue.cheek, e.tongue.cheek)
 
 dev.off()
 
