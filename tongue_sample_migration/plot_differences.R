@@ -29,30 +29,30 @@ if (length(absent) != 0) {
 # root tree (rooted tree is required)
 tree <- midpoint(tree)
 
-d.data <- rrarefy(original.data, min(otu.sum))
-e.data <- rrarefy(original.data, min(otu.sum))
+d.tongue.data <- rrarefy(original.data, min(otu.sum))
+e.tongue.data <- rrarefy(original.data, min(otu.sum))
 
-d.otu.sum <- apply(d.data,2,sum)
-d.data <- d.data[,which(d.otu.sum > 0)]
-d.tree <- tree
-absent <- d.tree$tip.label[!(d.tree$tip.label %in% colnames(d.data))]
+d.tongue.otu.sum <- apply(d.tongue.data,2,sum)
+d.tongue.data <- d.tongue.data[,which(d.tongue.otu.sum > 0)]
+d.tongue.tree <- tree
+absent <- d.tongue.tree$tip.label[!(d.tongue.tree$tip.label %in% colnames(d.tongue.data))]
 if (length(absent) != 0) {
-		d.tree <- drop.tip(d.tree, absent)
+		d.tongue.tree <- drop.tip(d.tongue.tree, absent)
 }
 
-e.otu.sum <- apply(e.data,2,sum)
-e.data <- e.data[,which(e.otu.sum > 0)]
-e.tree <- tree
-absent <- e.tree$tip.label[!(e.tree$tip.label %in% colnames(e.data))]
+e.tongue.otu.sum <- apply(e.tongue.data,2,sum)
+e.tongue.data <- e.tongue.data[,which(e.tongue.otu.sum > 0)]
+e.tongue.tree <- tree
+absent <- e.tongue.tree$tip.label[!(e.tongue.tree$tip.label %in% colnames(e.tongue.data))]
 if (length(absent) != 0) {
-		e.tree <- drop.tip(e.tree, absent)
+		e.tongue.tree <- drop.tip(e.tongue.tree, absent)
 }
 
-d.unifrac <- getDistanceMatrix(d.data,d.tree,method="unweighted",verbose=TRUE)
-e.unifrac <- getDistanceMatrix(e.data,e.tree,method="unweighted",verbose=TRUE)
+d.tongue.unifrac <- getDistanceMatrix(d.tongue.data,d.tongue.tree,method="unweighted",verbose=TRUE)
+e.tongue.unifrac <- getDistanceMatrix(e.tongue.data,e.tongue.tree,method="unweighted",verbose=TRUE)
 
-d <- pcoa(d.unifrac)
-e <- pcoa(e.unifrac)
+d.tongue <- pcoa(d.tongue.unifrac)
+e.tongue <- pcoa(e.tongue.unifrac)
 
 #function to get variance explained for the PCOA component labels
 getVarExplained <- function(vector) {
@@ -137,7 +137,7 @@ plotMigration <- function(d,e) {
 
 pdf("UniFrac_tvst_movement.pdf")	# Comment out if not plotting
 
-plotMigration(d,e)
+plotMigration(d.tongue,e.tongue)
 
 dev.off()
 
