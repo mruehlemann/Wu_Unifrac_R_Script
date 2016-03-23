@@ -10,14 +10,14 @@ tongue.tree <- read.tree("../data/tongue_dorsum/fasttree_all_seed_OTUs.tre")
 original.tongue.cheek.data <- read.table("../data/tongue_dorsum_vs_buccal_mucosa/hmp_tongue_cheek_data.txt",sep="\t",check.names=FALSE,quote="",comment.char="", header=TRUE,row.names=1)
 tongue.cheek.tree <- read.tree("../data/tongue_dorsum_vs_buccal_mucosa/hmp_tongue_cheek_subtree.tre")
 
-# remove all OTUs with zero counts across all samples (this data set should have a min. of 100 counts per OTU, but this code is here just in case.)
+# remove all OTUs with less than 100 counts across all samples
 tongue.otu.sum <- apply(original.tongue.data,1,sum)
-original.tongue.data <- original.tongue.data[which(tongue.otu.sum > 0),]
-tongue.otu.sum <- tongue.otu.sum[which(tongue.otu.sum>0)]
+original.tongue.data <- original.tongue.data[which(tongue.otu.sum >= 100),]
+tongue.otu.sum <- tongue.otu.sum[which(tongue.otu.sum>= 100)]
 
 tongue.cheek.otu.sum <- apply(original.tongue.cheek.data,1,sum)
-original.tongue.cheek.data <- original.tongue.cheek.data[which(tongue.cheek.otu.sum > 0),]
-tongue.cheek.otu.sum <- tongue.cheek.otu.sum[which(tongue.cheek.otu.sum>0)]
+original.tongue.cheek.data <- original.tongue.cheek.data[which(tongue.cheek.otu.sum >= 100),]
+tongue.cheek.otu.sum <- tongue.cheek.otu.sum[which(tongue.cheek.otu.sum>= 100)]
 
 # make sure tree tip names match OTU names by taking out single quotes
 tongue.tree$tip.label <- gsub("'","",tongue.tree$tip.label)
@@ -44,10 +44,11 @@ if (length(absent) != 0) {
 tongue.tree <- midpoint(tongue.tree)
 tongue.cheek.tree <- midpoint(tongue.cheek.tree)
 
-d.tongue.data <- rrarefy(original.tongue.data, min(tongue.otu.sum))
-e.tongue.data <- rrarefy(original.tongue.data, min(tongue.otu.sum))
-d.tongue.cheek.data <- rrarefy(original.tongue.cheek.data, min(tongue.cheek.otu.sum))
-e.tongue.cheek.data <- rrarefy(original.tongue.cheek.data, min(tongue.cheek.otu.sum))
+# tongue and cheek data have more read counts per sample, so we're rarefying to the lowest number of per sample counts in tongue only data
+d.tongue.data <- rrarefy(original.tongue.data, min(apply(original.tongue.data,1,sum)))
+e.tongue.data <- rrarefy(original.tongue.data, min(apply(original.tongue.data,1,sum)))
+d.tongue.cheek.data <- rrarefy(original.tongue.cheek.data, min(apply(original.tongue.data,1,sum)))
+e.tongue.cheek.data <- rrarefy(original.tongue.cheek.data, min(apply(original.tongue.data,1,sum)))
 
 d.tongue.otu.sum <- apply(d.tongue.data,2,sum)
 d.tongue.data <- d.tongue.data[,which(d.tongue.otu.sum > 0)]
@@ -177,6 +178,8 @@ pdf("UniFrac_tvst_movement.pdf")	# Comment out if not plotting
 
 plotMigration(d.tongue,e.tongue)
 plotMigration(d.tongue.cheek, e.tongue.cheek)
+par(new=TRUE)
+plot(d.tongue.cheek$vectors[1:60,1], d.tongue.cheek$vectors[1:60,2], xlab="",ylab="",pch=19, col=c(rep("black",30),rep("red",30)))	# Plot the 1st rarefation
 
 dev.off()
 
