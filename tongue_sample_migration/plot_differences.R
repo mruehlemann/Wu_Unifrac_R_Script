@@ -5,36 +5,38 @@ library(vegan)
 source("../UniFrac.r")
 
 # read data
-original.data <- read.table("../data/tongue_dorsum/tongue_vs_tongue_30_forR.txt",sep="\t",check.names=FALSE,quote="",comment.char="", header=TRUE,row.names=1)
-tree <- read.tree("../data/tongue_dorsum_vs_buccal_mucosa/hmp_tongue_cheek_subtree.tre")
+original.tongue.data <- read.table("../data/tongue_dorsum/tongue_vs_tongue_30_forR.txt",sep="\t",check.names=FALSE,quote="",comment.char="", header=TRUE,row.names=1)
+tongue.tree <- read.tree("../data/tongue_dorsum/fasttree_all_seed_OTUs.tre")
+original.tongue.cheek.data <- read.table("../data/tongue_dorsum_vs_buccal_mucosa/hmp_tongue_heek_data.txt",sep="\t",check.names=FALSE,quote="",comment.char="", header=TRUE,row.names=1)
+tongue.cheek.tree <- read.tree("../data/tongue_dorsum_vs_buccal_mucosa/hmp_tongue_cheek_subtree.tre")
 
 # remove all OTUs with zero counts across all samples (this data set should have a min. of 100 counts per OTU, but this code is here just in case.)
-otu.sum <- apply(original.data,1,sum)
-original.data <- original.data[which(otu.sum > 0),]
+otu.sum <- apply(original.tongue.data,1,sum)
+original.tongue.data <- original.tongue.data[which(otu.sum > 0),]
 otu.sum <- otu.sum[which(otu.sum>0)]
 
 # make sure tree tip names match OTU names by taking out single quotes
-tree$tip.label <- gsub("'","",tree$tip.label)
+tongue.tree$tip.label <- gsub("'","",tongue.tree$tip.label)
 # remove OTUs that are not in the tree
-original.data <- original.data[which(rownames(original.data) %in% tree$tip.label),]
+original.tongue.data <- original.tongue.data[which(rownames(original.tongue.data) %in% tongue.tree$tip.label),]
 
-original.data <- t(original.data)
+original.tongue.data <- t(original.tongue.data)
 
 # remove extra taxa from tree
-absent <- tree$tip.label[!(tree$tip.label %in% colnames(original.data))]
+absent <- tongue.tree$tip.label[!(tongue.tree$tip.label %in% colnames(original.tongue.data))]
 if (length(absent) != 0) {
-		tree <- drop.tip(tree, absent)
+		tongue.tree <- drop.tip(tongue.tree, absent)
 }
 
 # root tree (rooted tree is required)
-tree <- midpoint(tree)
+tongue.tree <- midpoint(tongue.tree)
 
-d.tongue.data <- rrarefy(original.data, min(otu.sum))
-e.tongue.data <- rrarefy(original.data, min(otu.sum))
+d.tongue.data <- rrarefy(original.tongue.data, min(otu.sum))
+e.tongue.data <- rrarefy(original.tongue.data, min(otu.sum))
 
 d.tongue.otu.sum <- apply(d.tongue.data,2,sum)
 d.tongue.data <- d.tongue.data[,which(d.tongue.otu.sum > 0)]
-d.tongue.tree <- tree
+d.tongue.tree <- tongue.tree
 absent <- d.tongue.tree$tip.label[!(d.tongue.tree$tip.label %in% colnames(d.tongue.data))]
 if (length(absent) != 0) {
 		d.tongue.tree <- drop.tip(d.tongue.tree, absent)
@@ -42,7 +44,7 @@ if (length(absent) != 0) {
 
 e.tongue.otu.sum <- apply(e.tongue.data,2,sum)
 e.tongue.data <- e.tongue.data[,which(e.tongue.otu.sum > 0)]
-e.tongue.tree <- tree
+e.tongue.tree <- tongue.tree
 absent <- e.tongue.tree$tip.label[!(e.tongue.tree$tip.label %in% colnames(e.tongue.data))]
 if (length(absent) != 0) {
 		e.tongue.tree <- drop.tip(e.tongue.tree, absent)
