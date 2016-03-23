@@ -14,17 +14,12 @@ plotParameters <- par()
 source("../UniFrac.r")
 
 # read OTU table and format appropriately for input into UniFrac methods
-monoculture.otu.tab <- read.table("../data/monoculture/monocultures.txt", header=T, sep="\t", comment.char="", check.names=FALSE)
+monoculture.otu.tab <- read.table("../data/monoculture/monocultures.txt", header=T, sep="\t", row.names=1, comment.char="", check.names=FALSE)
 
 #remove taxonomy column to make otu count matrix numeric
 taxonomy <- monoculture.otu.tab$taxonomy
 monoculture.otu.tab <- monoculture.otu.tab[-length(colnames(monoculture.otu.tab))]
 monoculture.otu.tab <- t(as.matrix(monoculture.otu.tab))
-
-#sort taxa from most to least abundant
-taxaOrder <- rev(order(apply(monoculture.otu.tab,2,sum)))
-taxonomy <- taxonomy[taxaOrder]
-monoculture.otu.tab <- monoculture.otu.tab[,taxaOrder]
 
 # extract genus + species name from taxonomy
 taxonomy <- as.character(taxonomy)
@@ -38,18 +33,6 @@ monoculture.otu.tab.rarefy <- rrarefy(monoculture.otu.tab, min(apply(monoculture
 # read and root tree (rooted tree is required)
 monoculture.tree <- read.tree("../data/monoculture/fasttree_all_seed_OTUs.tre")
 monoculture.tree <- midpoint(monoculture.tree)
-
-# read metadata
-MyMeta<- read.table("../data/monoculture/metadata.txt", header=T, sep="\t", row.names=1, comment.char="", check.names=FALSE)
-
-#remove infected sample S38I
-#MyMeta <- MyMeta[(which(rownames(MyMeta)!="S38I")),]
-
-# filter OTU table and metadata so that only samples which appear in both are retained
-otu_indicies <- match(rownames(MyMeta),rownames(monoculture.otu.tab))
-otu_indicies <- otu_indicies[!is.na(otu_indicies)]
-monoculture.otu.tab <- monoculture.otu.tab[otu_indicies,]
-MyMetaOrdered <- MyMeta[match(rownames(monoculture.otu.tab),rownames(MyMeta)),]
 
 unweighted <- getDistanceMatrix(monoculture.otu.tab.rarefy,monoculture.tree,method="unweighted",verbose=TRUE)
 
@@ -67,8 +50,7 @@ diag(braycurtis) <- 0
 braycurtis.vegdist <- vegdist(monoculture.otu.tab,method="bray",upper=TRUE)
 braycurtis[upper.tri(braycurtis)] <- braycurtis.vegdist
 
-groups <- rep("Not Infected",length(MyMetaOrdered$Gestation))
-groups[which(rownames(MyMetaOrdered)=="S38I")] <- "Infected"
+groups <- c(rep("Pasteurella",20),rep("Staphylococcus",20),rep("Pseudomonas",20))
 groups <- as.factor(groups)
 
 otuSum <- apply(monoculture.otu.tab,1,sum)
@@ -108,7 +90,7 @@ braycurtis.pc1.varEx <- sd(braycurtis.pcoa$vector[,1])*sd(braycurtis.pcoa$vector
 braycurtis.pc2.varEx <- sd(braycurtis.pcoa$vector[,2])*sd(braycurtis.pcoa$vector[,2])/braycurtis.varExplained
 
 #save plots as PDF
-pdf("output/monoculture_pcoa_plots.pdf")
+pdf("monoculture_pcoa_plots.pdf")
 
 # MAKE BAR PLOTS
 
