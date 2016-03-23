@@ -103,9 +103,11 @@ getVarExplained <- function(vector) {
 
 plotMigration <- function(d,e) {
 	d.varEx <- getVarExplained(d$vectors)
+	# convert to percentage
+	d.varEx <- d.varEx * 100
 
 	# Setup axis labelling conventions
-	per <- "% Explained"
+	per <- "%"
 	x.pc1.explained <- d.varEx[1]
 	x.pc1.explained <- round(x.pc1.explained, digits=1)
 	xlabel <- "Principal Component1 Eigenvalues: "
