@@ -1,3 +1,5 @@
+#!/usr/bin/Rscript
+
 ## FOR GG
 # Plots a set of 30 tongue samples vs 30 tongue samples
 # Should be no differences, but there's a difference in the sets of 
