@@ -189,7 +189,7 @@ plot(information.pcoa$vectors[,1],information.pcoa$vectors[,2], col=groups,main=
 # #placement with S38I excluded
 # legend(0.4,-0.15,levels(groups),col=palette(),pch=19)
 
-plot(ratio_no_log.pcoa$vectors[,1],ratio_no_log.pcoa$vectors[,2], col=groups,main="Centered Ratio UniFrac\nprincipal coordinate analysis",xlab=paste("First Coordinate", round(ratio_no_log.pc1.varEx,digits=3),"variance explained"),ylab=paste("Second Coordinate", round(ratio_no_log.pc2.varEx,digits=3),"variance explained"),pch=19,cex.lab=1.4,cex.main=2)
+plot(ratio_no_log.pcoa$vectors[,1],ratio_no_log.pcoa$vectors[,2], col=groups,main="Ratio UniFrac\nprincipal coordinate analysis",xlab=paste("First Coordinate", round(ratio_no_log.pc1.varEx,digits=3),"variance explained"),ylab=paste("Second Coordinate", round(ratio_no_log.pc2.varEx,digits=3),"variance explained"),pch=19,cex.lab=1.4,cex.main=2)
 
 plot(braycurtis.pcoa$vectors[,1],braycurtis.pcoa$vectors[,2], col=groups,main="Bray Curtis Dissimilarity\nprincipal coordinate analysis",xlab=paste("First Coordinate", round(braycurtis.pc1.varEx,digits=3),"variance explained"),ylab=paste("Second Coordinate", round(braycurtis.pc2.varEx,digits=3),"variance explained"),pch=19,cex.lab=1.4,cex.main=2)
 
