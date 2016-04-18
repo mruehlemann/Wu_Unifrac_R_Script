@@ -1,6 +1,8 @@
+#!/usr/bin/Rscript
 library(ape)
 library(phangorn)
 library(vegan)
+library(car)
 source("../UniFrac.r")
 
 # read data
@@ -46,7 +48,7 @@ for (i in c(1:100)) {
   unifrac[[i]][["unweighted"]] <- all_distance_matrices[["unweighted"]]
   unifrac[[i]][["weighted"]] <- all_distance_matrices[["weighted"]]
   unifrac[[i]][["information"]] <- all_distance_matrices[["information"]]
-  unifrac[[i]][["ratio"]] <- all_distance_matrices[["ratio_no_log"]]
+  unifrac[[i]][["ratio"]] <- all_distance_matrices[["ratio"]]
   # get bray curtis distance through vegan, convert into distance matrix format
   braycurtis.vegdist <- vegdist(rarefactions[[i]],method="bray")
   unifrac[[i]][["braycurtis"]] <- matrix(nrow=nrow(rarefactions[[i]]),ncol=nrow(rarefactions[[i]]))
@@ -90,49 +92,93 @@ for (i in c(2:100)) {
 # get mean/max deviation
 mean.dev <- list()
 max.dev <- list()
+minRange <- list()
+maxRange <- list()
+minRange[["unweighted"]] <- min(fit.plots[[target]][["unweighted"]])
+minRange[["weighted"]] <- min(fit.plots[[target]][["weighted"]])
+minRange[["information"]] <- min(fit.plots[[target]][["information"]])
+minRange[["ratio"]] <- min(fit.plots[[target]][["ratio"]])
+minRange[["braycurtis"]] <- min(fit.plots[[target]][["braycurtis"]])
+
+maxRange[["unweighted"]] <- max(fit.plots[[target]][["unweighted"]])
+maxRange[["weighted"]] <- max(fit.plots[[target]][["weighted"]])
+maxRange[["information"]] <- max(fit.plots[[target]][["information"]])
+maxRange[["ratio"]] <- max(fit.plots[[target]][["ratio"]])
+maxRange[["braycurtis"]] <- max(fit.plots[[target]][["braycurtis"]])
+
 for (i in c(2:100)) {
   mean.dev[[i]] <- list()
-  mean.dev[[i]][["unweighted"]] <- mean(abs(fit.plots[[i]][["unweighted"]] - fit.plots[[target]][["unweighted"]]))
-  mean.dev[[i]][["weighted"]] <- mean(abs(fit.plots[[i]][["weighted"]] - fit.plots[[target]][["weighted"]]))
-  mean.dev[[i]][["information"]] <- mean(abs(fit.plots[[i]][["information"]] - fit.plots[[target]][["information"]]))
-  mean.dev[[i]][["ratio"]] <- mean(abs(fit.plots[[i]][["ratio"]] - fit.plots[[target]][["ratio"]]))
-  mean.dev[[i]][["braycurtis"]] <- mean(abs(fit.plots[[i]][["braycurtis"]] - fit.plots[[target]][["braycurtis"]]))
+  mean.dev[[i]][["unweighted"]] <- mean(abs(fit.plots[[i]]$unweighted$Yrot - fit.plots[[target]][["unweighted"]]))
+  mean.dev[[i]][["weighted"]] <- mean(abs(fit.plots[[i]]$weighted$Yrot - fit.plots[[target]][["weighted"]]))
+  mean.dev[[i]][["information"]] <- mean(abs(fit.plots[[i]]$information$Yrot - fit.plots[[target]][["information"]]))
+  mean.dev[[i]][["ratio"]] <- mean(abs(fit.plots[[i]]$ratio$Yrot - fit.plots[[target]][["ratio"]]))
+  mean.dev[[i]][["braycurtis"]] <- mean(abs(fit.plots[[i]]$braycurtis$Yrot - fit.plots[[target]][["braycurtis"]]))
   
   max.dev[[i]] <- list()
-  max.dev[[i]][["unweighted"]] <- max(abs(fit.plots[[i]][["unweighted"]] - fit.plots[[target]][["unweighted"]]))
-  max.dev[[i]][["weighted"]] <- max(abs(fit.plots[[i]][["weighted"]] - fit.plots[[target]][["weighted"]]))
-  max.dev[[i]][["information"]] <- max(abs(fit.plots[[i]][["information"]] - fit.plots[[target]][["information"]]))
-  max.dev[[i]][["ratio"]] <- max(abs(fit.plots[[i]][["ratio"]] - fit.plots[[target]][["ratio"]]))
-  max.dev[[i]][["braycurtis"]] <- max(abs(fit.plots[[i]][["braycurtis"]] - fit.plots[[target]][["braycurtis"]]))
+  max.dev[[i]][["unweighted"]] <- max(abs(fit.plots[[i]]$unweighted$Yrot - fit.plots[[target]][["unweighted"]]))
+  max.dev[[i]][["weighted"]] <- max(abs(fit.plots[[i]]$weighted$Yrot - fit.plots[[target]][["weighted"]]))
+  max.dev[[i]][["information"]] <- max(abs(fit.plots[[i]]$information$Yrot - fit.plots[[target]][["information"]]))
+  max.dev[[i]][["ratio"]] <- max(abs(fit.plots[[i]]$ratio$Yrot - fit.plots[[target]][["ratio"]]))
+  max.dev[[i]][["braycurtis"]] <- max(abs(fit.plots[[i]]$braycurtis$Yrot - fit.plots[[target]][["braycurtis"]]))
+	
+	minRange[["unweighted"]] <- min(minRange[["unweighted"]], min(fit.plots[[i]]$unweighted$Yrot))
+	minRange[["weighted"]] <- min(minRange[["weighted"]], min(fit.plots[[i]]$weighted$Yrot))
+	minRange[["information"]] <- min(minRange[["information"]], min(fit.plots[[i]]$information$Yrot))
+	minRange[["ratio"]] <- min(minRange[["ratio"]], min(fit.plots[[i]]$ratio$Yrot))
+	minRange[["braycurtis"]] <- min(minRange[["braycurtis"]], min(fit.plots[[i]]$braycurtis$Yrot))
+
+	maxRange[["unweighted"]] <- max(maxRange[["unweighted"]], max(fit.plots[[i]]$unweighted$Yrot))
+	maxRange[["weighted"]] <- max(maxRange[["weighted"]], max(fit.plots[[i]]$weighted$Yrot))
+	maxRange[["information"]] <- max(maxRange[["information"]], max(fit.plots[[i]]$information$Yrot))
+	maxRange[["ratio"]] <- max(maxRange[["ratio"]], max(fit.plots[[i]]$ratio$Yrot))
+	maxRange[["braycurtis"]] <- max(maxRange[["braycurtis"]], max(fit.plots[[i]]$braycurtis$Yrot))
 }
 
 # get mean and max into vectors for plotting
-unweighted.mean <- unlist(lapply(mean.dev),function(x) { return(x[["unweighted"]]) })
-weighted.mean <- unlist(lapply(mean.dev),function(x) { return(x[["weighted"]]) })
-information.mean <- unlist(lapply(mean.dev),function(x) { return(x[["information"]]) })
-ratio.mean <- unlist(lapply(mean.dev),function(x) { return(x[["ratio"]]) })
-braycurtis.mean <- unlist(lapply(mean.dev),function(x) { return(x[["braycurtis"]]) })
+unweighted.mean <- unlist(lapply(mean.dev,function(x) { return(x[["unweighted"]]) }))
+weighted.mean <- unlist(lapply(mean.dev,function(x) { return(x[["weighted"]]) }))
+information.mean <- unlist(lapply(mean.dev,function(x) { return(x[["information"]]) }))
+ratio.mean <- unlist(lapply(mean.dev,function(x) { return(x[["ratio"]]) }))
+braycurtis.mean <- unlist(lapply(mean.dev,function(x) { return(x[["braycurtis"]]) }))
 
-unweighted.max <- unlist(lapply(max.dev),function(x) { return(x[["unweighted"]]) })
-weighted.max <- unlist(lapply(max.dev),function(x) { return(x[["weighted"]]) })
-information.max <- unlist(lapply(max.dev),function(x) { return(x[["information"]]) })
-ratio.max <- unlist(lapply(max.dev),function(x) { return(x[["ratio"]]) })
-braycurtis.max <- unlist(lapply(max.dev),function(x) { return(x[["braycurtis"]]) })
+unweighted.max <- unlist(lapply(max.dev,function(x) { return(x[["unweighted"]]) }))
+weighted.max <- unlist(lapply(max.dev,function(x) { return(x[["weighted"]]) }))
+information.max <- unlist(lapply(max.dev,function(x) { return(x[["information"]]) }))
+ratio.max <- unlist(lapply(max.dev,function(x) { return(x[["ratio"]]) }))
+braycurtis.max <- unlist(lapply(max.dev,function(x) { return(x[["braycurtis"]]) }))
+
+normalize.on.range <- function(myvalues,minRange,maxRange,name) {
+	return( (myvalues)/abs(maxRange[[name]]-minRange[[name]]))
+}
+
+unweighted.mean <- normalize.on.range(unweighted.mean, minRange, maxRange, "unweighted")
+weighted.mean <- normalize.on.range(weighted.mean, minRange, maxRange, "weighted")
+information.mean <- normalize.on.range(information.mean, minRange, maxRange, "information")
+ratio.mean <- normalize.on.range(ratio.mean, minRange, maxRange, "ratio")
+braycurtis.mean <- normalize.on.range(braycurtis.mean, minRange, maxRange, "braycurtis")
+
+unweighted.max <- normalize.on.range(unweighted.max, minRange, maxRange, "unweighted")
+weighted.max <- normalize.on.range(weighted.max, minRange, maxRange, "weighted")
+information.max <- normalize.on.range(information.max, minRange, maxRange, "information")
+ratio.max <- normalize.on.range(ratio.max, minRange, maxRange, "ratio")
+braycurtis.max <- normalize.on.range(braycurtis.max, minRange, maxRange, "braycurtis")
 
 # plot ellipses
-pdf("tongue_dorsum_ellipses.pdf")
+pdf("tongue_dorsum_ellipses_log_ratio.pdf")
 xMax <- max(c(unweighted.mean, weighted.mean, information.mean, ratio.mean, braycurtis.mean))
+xMax <- xMax * 1.2
 yMax <- max(c(unweighted.max, weighted.max, information.max, ratio.max, braycurtis.max))
-
-dataEllipse(unweighted.mean, unweighted.max,xlim=c(0,xMax), ylim=c(0,yMax), plot.points=FALSE, col = palette()[i], levels=c(0.95), center.pch=0)
+yMax <- yMax * 1.2
+plot(c(0,xMax),c(0,yMax),col="white",main="Max vs. mean relative deviation of rarefactions",xlab="Maximum relative deviation per rarefaction",ylab="Mean relative deviation per rarefaction")
+dataEllipse(unweighted.mean, unweighted.max,xlim=c(0,xMax), ylim=c(0,yMax), plot.points=FALSE, col = "red", levels=c(0.95), center.pch=0)
 par(new=TRUE)
-dataEllipse(weighted.mean, weighted.max,xlim=c(0,xMax), ylim=c(0,yMax), plot.points=FALSE, col = palette()[i], levels=c(0.95), center.pch=0)
+dataEllipse(weighted.mean, weighted.max,xlim=c(0,xMax), ylim=c(0,yMax), plot.points=FALSE, col = "green", levels=c(0.95), center.pch=0)
 par(new=TRUE)
-dataEllipse(information.mean, information.max,xlim=c(0,xMax), ylim=c(0,yMax), plot.points=FALSE, col = palette()[i], levels=c(0.95), center.pch=0)
+dataEllipse(information.mean, information.max,xlim=c(0,xMax), ylim=c(0,yMax), plot.points=FALSE, col = "blue", levels=c(0.95), center.pch=0)
 par(new=TRUE)
-dataEllipse(ratio.mean, ratio.max,xlim=c(0,xMax), ylim=c(0,yMax), plot.points=FALSE, col = palette()[i], levels=c(0.95), center.pch=0)
+dataEllipse(ratio.mean, ratio.max,xlim=c(0,xMax), ylim=c(0,yMax), plot.points=FALSE, col = "black", levels=c(0.95), center.pch=0)
 par(new=TRUE)
-dataEllipse(braycurtis.mean, braycurtis.max,xlim=c(0,xMax), ylim=c(0,yMax), plot.points=FALSE, col = palette()[i], levels=c(0.95), center.pch=0)
+dataEllipse(braycurtis.mean, braycurtis.max,xlim=c(0,xMax), ylim=c(0,yMax), plot.points=FALSE, col = "purple", levels=c(0.95), center.pch=0)
 par(new=TRUE)
 
 dev.off()
