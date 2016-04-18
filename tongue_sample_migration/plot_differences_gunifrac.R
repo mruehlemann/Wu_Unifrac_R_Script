@@ -4,11 +4,12 @@
 # Plots a set of 30 tongue samples vs 30 tongue samples
 # Should be no differences, but there's a difference in the sets of 
 library(vegan)
+library(phangorn)
 library(GUniFrac)
 
 # read data
 original.tongue.data <- read.table("../data/tongue_dorsum/tongue_vs_tongue_30_forR.txt",sep="\t",check.names=FALSE,quote="",comment.char="", header=TRUE,row.names=1)
-tongue.tree <- read.tree("../data/tongue_dorsum/fasttree_all_seed_OTUs.tre")
+tongue.tree <- read.tree("../data/tongue_dorsum/tongue_vs_tongue.tre")
 original.tongue.cheek.data <- read.table("../data/tongue_dorsum_vs_buccal_mucosa/hmp_tongue_cheek_data.txt",sep="\t",check.names=FALSE,quote="",comment.char="", header=TRUE,row.names=1)
 tongue.cheek.tree <- read.tree("../data/tongue_dorsum_vs_buccal_mucosa/hmp_tongue_cheek_subtree.tre")
 
@@ -84,16 +85,26 @@ if (length(absent) != 0) {
 		e.tongue.cheek.tree <- drop.tip(e.tongue.cheek.tree, absent)
 }
 
+alphas <- c(0, 0.25, 0.5, 0.75, 1)
 
-d.tongue.unifrac <- getDistanceMatrix(d.tongue.data,d.tongue.tree,method="unweighted",verbose=TRUE)
-e.tongue.unifrac <- getDistanceMatrix(e.tongue.data,e.tongue.tree,method="unweighted",verbose=TRUE)
-d.tongue.cheek.unifrac <- getDistanceMatrix(d.tongue.cheek.data,d.tongue.cheek.tree,method="unweighted",verbose=TRUE)
-e.tongue.cheek.unifrac <- getDistanceMatrix(e.tongue.cheek.data,e.tongue.cheek.tree,method="unweighted",verbose=TRUE)
+d.tongue.unifrac <- GUniFrac(d.tongue.data,d.tongue.tree, alpha = alphas)
+e.tongue.unifrac <- GUniFrac(e.tongue.data,e.tongue.tree, alpha = alphas)
+d.tongue.cheek.unifrac <- GUniFrac(d.tongue.cheek.data,d.tongue.cheek.tree, alpha = alphas)
+e.tongue.cheek.unifrac <- GUniFrac(e.tongue.cheek.data,e.tongue.cheek.tree, alpha = alphas)
 
-d.tongue <- pcoa(d.tongue.unifrac)
-e.tongue <- pcoa(e.tongue.unifrac)
-d.tongue.cheek <- pcoa(d.tongue.cheek.unifrac)
-e.tongue.cheek <- pcoa(e.tongue.cheek.unifrac)
+d.tongue <- list()
+e.tongue <- list()
+d.tongue.cheek <- list()
+e.tongue.cheek <- list()
+
+alphas <- c(alphas,"d_UW")
+
+for (i in c(1:length(alphas))) {
+	d.tongue[[as.character(alphas[i])]] <- pcoa(d.tongue.unifrac$unifracs[,,i])
+	e.tongue[[as.character(alphas[i])]] <- pcoa(e.tongue.unifrac$unifracs[,,i])
+	d.tongue.cheek[[as.character(alphas[i])]] <- pcoa(d.tongue.cheek.unifrac$unifracs[,,i])
+	e.tongue.cheek[[as.character(alphas[i])]] <- pcoa(e.tongue.cheek.unifrac$unifracs[,,i])
+}
 
 #function to get variance explained for the PCOA component labels
 getVarExplained <- function(vector) {
@@ -178,12 +189,16 @@ plotMigration <- function(d,e) {
 
 
 
-pdf("UniFrac_tvst_movement.pdf")	# Comment out if not plotting
+pdf("UniFrac_tvst_movement_GUniFrac.pdf")	# Comment out if not plotting
 
-plotMigration(d.tongue,e.tongue)
-plotMigration(d.tongue.cheek, e.tongue.cheek)
-par(new=TRUE)
-plot(d.tongue.cheek$vectors[1:60,1], d.tongue.cheek$vectors[1:60,2], xlab="",ylab="",pch=19, col=c(rep("black",30),rep("red",30)))	# Plot the 1st rarefation
+for (i in c(1:length(alphas))) {
+	plotMigration(d.tongue[[as.character(alphas[i])]],e.tongue[[as.character(alphas[i])]])
+	plotMigration(d.tongue.cheek[[as.character(alphas[i])]], e.tongue.cheek[[as.character(alphas[i])]])
+	par(new=TRUE)
+	plot(d.tongue.cheek[[as.character(alphas[i])]]$vectors[1:60,1], d.tongue.cheek[[as.character(alphas[i])]]$vectors[1:60,2], xlab="",ylab="",pch=19, col=c(rep("black",30),rep("red",30)))	# Plot the 1st rarefation
+}
+
+
 
 dev.off()
 

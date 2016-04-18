@@ -8,7 +8,7 @@ source("../UniFrac.r")
 
 # read data
 original.tongue.data <- read.table("../data/tongue_dorsum/tongue_vs_tongue_30_forR.txt",sep="\t",check.names=FALSE,quote="",comment.char="", header=TRUE,row.names=1)
-tongue.tree <- read.tree("../data/tongue_dorsum/fasttree_all_seed_OTUs.tre")
+tongue.tree <- read.tree("../data/tongue_dorsum/tongue_vs_tongue.tre")
 original.tongue.cheek.data <- read.table("../data/tongue_dorsum_vs_buccal_mucosa/hmp_tongue_cheek_data.txt",sep="\t",check.names=FALSE,quote="",comment.char="", header=TRUE,row.names=1)
 tongue.cheek.tree <- read.tree("../data/tongue_dorsum_vs_buccal_mucosa/hmp_tongue_cheek_subtree.tre")
 
