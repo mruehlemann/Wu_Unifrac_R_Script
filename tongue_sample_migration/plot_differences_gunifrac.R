@@ -4,7 +4,7 @@
 # Plots a set of 30 tongue samples vs 30 tongue samples
 # Should be no differences, but there's a difference in the sets of 
 library(vegan)
-source("../UniFrac.r")
+library(GUniFrac)
 
 # read data
 original.tongue.data <- read.table("../data/tongue_dorsum/tongue_vs_tongue_30_forR.txt",sep="\t",check.names=FALSE,quote="",comment.char="", header=TRUE,row.names=1)
