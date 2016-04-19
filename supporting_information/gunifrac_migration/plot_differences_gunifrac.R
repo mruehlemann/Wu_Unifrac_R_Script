@@ -8,10 +8,10 @@ library(phangorn)
 source("GUniFrac.R")
 
 # read data
-original.tongue.data <- read.table("../data/tongue_dorsum/tongue_vs_tongue_30_forR.txt",sep="\t",check.names=FALSE,quote="",comment.char="", header=TRUE,row.names=1)
-tongue.tree <- read.tree("../data/tongue_dorsum/tongue_vs_tongue.tre")
-original.tongue.cheek.data <- read.table("../data/tongue_dorsum_vs_buccal_mucosa/hmp_tongue_cheek_data.txt",sep="\t",check.names=FALSE,quote="",comment.char="", header=TRUE,row.names=1)
-tongue.cheek.tree <- read.tree("../data/tongue_dorsum_vs_buccal_mucosa/hmp_tongue_cheek_subtree.tre")
+original.tongue.data <- read.table("../../data/tongue_dorsum/tongue_vs_tongue_30_forR.txt",sep="\t",check.names=FALSE,quote="",comment.char="", header=TRUE,row.names=1)
+tongue.tree <- read.tree("../../data/tongue_dorsum/tongue_vs_tongue.tre")
+original.tongue.cheek.data <- read.table("../../data/tongue_dorsum_vs_buccal_mucosa/hmp_tongue_cheek_data.txt",sep="\t",check.names=FALSE,quote="",comment.char="", header=TRUE,row.names=1)
+tongue.cheek.tree <- read.tree("../../data/tongue_dorsum_vs_buccal_mucosa/hmp_tongue_cheek_subtree.tre")
 
 # remove all OTUs with less than 100 counts across all samples
 tongue.otu.sum <- apply(original.tongue.data,1,sum)
