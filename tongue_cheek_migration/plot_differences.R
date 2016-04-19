@@ -7,75 +7,36 @@ library(vegan)
 source("../UniFrac.r")
 
 # read data
-original.tongue.data <- read.table("../data/tongue_dorsum/tongue_vs_tongue_30_forR.txt",sep="\t",check.names=FALSE,quote="",comment.char="", header=TRUE,row.names=1)
-# tongue.tree <- read.tree("../data/tongue_dorsum/tongue_vs_tongue.tre")
-tongue.tree <- read.tree("fasttree_all_seed_OTUs.tre")
 original.tongue.cheek.data <- read.table("../data/tongue_dorsum_vs_buccal_mucosa/hmp_tongue_cheek_data.txt",sep="\t",check.names=FALSE,quote="",comment.char="", header=TRUE,row.names=1)
 tongue.cheek.tree <- read.tree("../data/tongue_dorsum_vs_buccal_mucosa/hmp_tongue_cheek_subtree.tre")
 
 # remove all OTUs with less than 100 counts across all samples
-tongue.otu.sum <- apply(original.tongue.data,1,sum)
-original.tongue.data <- original.tongue.data[which(tongue.otu.sum >= 100),]
-tongue.otu.sum <- tongue.otu.sum[which(tongue.otu.sum>= 100)]
-
 tongue.cheek.otu.sum <- apply(original.tongue.cheek.data,1,sum)
 original.tongue.cheek.data <- original.tongue.cheek.data[which(tongue.cheek.otu.sum >= 100),]
 tongue.cheek.otu.sum <- tongue.cheek.otu.sum[which(tongue.cheek.otu.sum>= 100)]
 
 # make sure tree tip names match OTU names by taking out single quotes
-tongue.tree$tip.label <- gsub("'","",tongue.tree$tip.label)
 tongue.cheek.tree$tip.label <- gsub("'","",tongue.cheek.tree$tip.label)
 
 # remove OTUs that are not in the tree
-original.tongue.data <- original.tongue.data[which(rownames(original.tongue.data) %in% tongue.tree$tip.label),]
 original.tongue.cheek.data <- original.tongue.cheek.data[which(rownames(original.tongue.cheek.data) %in% tongue.cheek.tree$tip.label),]
-
-original.tongue.data <- t(original.tongue.data)
 original.tongue.cheek.data <- t(original.tongue.cheek.data)
 
 # remove extra taxa from tree
-absent <- tongue.tree$tip.label[!(tongue.tree$tip.label %in% colnames(original.tongue.data))]
-if (length(absent) != 0) {
-		tongue.tree <- drop.tip(tongue.tree, absent)
-}
 absent <- tongue.cheek.tree$tip.label[!(tongue.cheek.tree$tip.label %in% colnames(original.tongue.cheek.data))]
 if (length(absent) != 0) {
 		tongue.cheek.tree <- drop.tip(tongue.cheek.tree, absent)
 }
 
 # root tree (rooted tree is required)
-tongue.tree <- midpoint(tongue.tree)
 tongue.cheek.tree <- midpoint(tongue.cheek.tree)
 
 # tongue and cheek data have more read counts per sample, so we're rarefying to the lowest number of per sample counts in tongue only data
-# d.tongue.data <- rrarefy(original.tongue.data, min(apply(original.tongue.data,1,sum)))
-# e.tongue.data <- rrarefy(original.tongue.data, min(apply(original.tongue.data,1,sum)))
+min.sample.size <- 659
+d.tongue.cheek.data <- rrarefy(original.tongue.cheek.data, min.sample.size)
+e.tongue.cheek.data <- rrarefy(original.tongue.cheek.data, min.sample.size)
 
-d.tongue.data <- read.table("A_otu_table_tab_r659_original.txt",sep="\t",quote="",header=TRUE,row.names=1,check.names=FALSE)
-e.tongue.data <- read.table("B_otu_table_tab_r659_original.txt",sep="\t",quote="",header=TRUE,row.names=1,check.names=FALSE)
-
-d.tongue.data <- t(d.tongue.data)
-e.tongue.data <- t(e.tongue.data)
-
-d.tongue.cheek.data <- rrarefy(original.tongue.cheek.data, min(apply(original.tongue.data,1,sum)))
-e.tongue.cheek.data <- rrarefy(original.tongue.cheek.data, min(apply(original.tongue.data,1,sum)))
-
-d.tongue.otu.sum <- apply(d.tongue.data,2,sum)
-d.tongue.data <- d.tongue.data[,which(d.tongue.otu.sum > 0)]
-d.tongue.tree <- tongue.tree
-absent <- d.tongue.tree$tip.label[!(d.tongue.tree$tip.label %in% colnames(d.tongue.data))]
-if (length(absent) != 0) {
-		d.tongue.tree <- drop.tip(d.tongue.tree, absent)
-}
-
-e.tongue.otu.sum <- apply(e.tongue.data,2,sum)
-e.tongue.data <- e.tongue.data[,which(e.tongue.otu.sum > 0)]
-e.tongue.tree <- tongue.tree
-absent <- e.tongue.tree$tip.label[!(e.tongue.tree$tip.label %in% colnames(e.tongue.data))]
-if (length(absent) != 0) {
-		e.tongue.tree <- drop.tip(e.tongue.tree, absent)
-}
-
+# clean removed OTUs out of tree
 d.tongue.cheek.otu.sum <- apply(d.tongue.cheek.data,2,sum)
 d.tongue.cheek.data <- d.tongue.cheek.data[,which(d.tongue.cheek.otu.sum > 0)]
 d.tongue.cheek.tree <- tongue.cheek.tree
@@ -92,22 +53,9 @@ if (length(absent) != 0) {
 		e.tongue.cheek.tree <- drop.tip(e.tongue.cheek.tree, absent)
 }
 
-
-d.tongue.unifrac <- getDistanceMatrix(d.tongue.data,d.tongue.tree,method="unweighted",verbose=TRUE,pruneTree=TRUE)
-e.tongue.unifrac <- getDistanceMatrix(e.tongue.data,e.tongue.tree,method="unweighted",verbose=TRUE,pruneTree=TRUE)
 d.tongue.cheek.unifrac <- getDistanceMatrix(d.tongue.cheek.data,d.tongue.cheek.tree,method="unweighted",verbose=TRUE,pruneTree=TRUE)
 e.tongue.cheek.unifrac <- getDistanceMatrix(e.tongue.cheek.data,e.tongue.cheek.tree,method="unweighted",verbose=TRUE,pruneTree=TRUE)
 
-# d.tongue.unifrac.no.normalize <- getDistanceMatrix(d.tongue.data,d.tongue.tree,method="unweighted",verbose=TRUE,pruneTree=TRUE,normalize=FALSE)
-# e.tongue.unifrac.no.normalize <- getDistanceMatrix(e.tongue.data,e.tongue.tree,method="unweighted",verbose=TRUE,pruneTree=TRUE,normalize=FALSE)
-# d.tongue.cheek.unifrac.no.normalize <- getDistanceMatrix(d.tongue.cheek.data,d.tongue.cheek.tree,method="unweighted",verbose=TRUE,pruneTree=TRUE,normalize=FALSE)
-# e.tongue.cheek.unifrac.no.normalize <- getDistanceMatrix(e.tongue.cheek.data,e.tongue.cheek.tree,method="unweighted",verbose=TRUE,pruneTree=TRUE,normalize=FALSE)
-
-# qiime.d <- read.table("~/Desktop/A_unweighted_unifrac_dm.txt",sep="\t",header=TRUE,quote="",row.names=1,check.names=FALSE)
-# qiime.e <- read.table("~/Desktop/B_unweighted_unifrac_dm.txt",sep="\t",header=TRUE,quote="",row.names=1,check.names=FALSE)
-
-d.tongue <- pcoa(d.tongue.unifrac)
-e.tongue <- pcoa(e.tongue.unifrac)
 d.tongue.cheek <- pcoa(d.tongue.cheek.unifrac)
 e.tongue.cheek <- pcoa(e.tongue.cheek.unifrac)
 
@@ -196,10 +144,9 @@ plotMigration <- function(d,e) {
 
 pdf("UniFrac_tvst_movement.pdf")	# Comment out if not plotting
 
-plotMigration(d.tongue,e.tongue)
 plotMigration(d.tongue.cheek, e.tongue.cheek)
 par(new=TRUE)
-plot(d.tongue.cheek$vectors[1:60,1], d.tongue.cheek$vectors[1:60,2], xlab="",ylab="",pch=19, col=c(rep("black",30),rep("red",30)))	# Plot the 1st rarefation
+points(d.tongue.cheek$vectors[1:60,1], d.tongue.cheek$vectors[1:60,2], pch=19, col=c(rep("black",30),rep("red",30)))	# Plot the 1st rarefation
 
 dev.off()
 

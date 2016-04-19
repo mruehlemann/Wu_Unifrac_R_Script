@@ -5,7 +5,7 @@
 # Should be no differences, but there's a difference in the sets of 
 library(vegan)
 library(phangorn)
-library(GUniFrac)
+source("GUniFrac.R")
 
 # read data
 original.tongue.data <- read.table("../data/tongue_dorsum/tongue_vs_tongue_30_forR.txt",sep="\t",check.names=FALSE,quote="",comment.char="", header=TRUE,row.names=1)
@@ -48,14 +48,8 @@ tongue.tree <- midpoint(tongue.tree)
 tongue.cheek.tree <- midpoint(tongue.cheek.tree)
 
 # tongue and cheek data have more read counts per sample, so we're rarefying to the lowest number of per sample counts in tongue only data
-# d.tongue.data <- rrarefy(original.tongue.data, min(apply(original.tongue.data,1,sum)))
-# e.tongue.data <- rrarefy(original.tongue.data, min(apply(original.tongue.data,1,sum)))
-
-d.tongue.data <- read.table("A_otu_table_tab_r659_original.txt",sep="\t",quote="",header=TRUE,row.names=1,check.names=FALSE)
-e.tongue.data <- read.table("B_otu_table_tab_r659_original.txt",sep="\t",quote="",header=TRUE,row.names=1,check.names=FALSE)
-
-d.tongue.data <- t(d.tongue.data)
-e.tongue.data <- t(e.tongue.data)
+d.tongue.data <- rrarefy(original.tongue.data, min(apply(original.tongue.data,1,sum)))
+e.tongue.data <- rrarefy(original.tongue.data, min(apply(original.tongue.data,1,sum)))
 
 d.tongue.cheek.data <- rrarefy(original.tongue.cheek.data, min(apply(original.tongue.data,1,sum)))
 e.tongue.cheek.data <- rrarefy(original.tongue.cheek.data, min(apply(original.tongue.data,1,sum)))
