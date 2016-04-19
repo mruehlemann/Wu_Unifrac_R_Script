@@ -8,7 +8,8 @@ source("../UniFrac.r")
 
 # read data
 original.tongue.data <- read.table("../data/tongue_dorsum/tongue_vs_tongue_30_forR.txt",sep="\t",check.names=FALSE,quote="",comment.char="", header=TRUE,row.names=1)
-tongue.tree <- read.tree("../data/tongue_dorsum/tongue_vs_tongue.tre")
+# tongue.tree <- read.tree("../data/tongue_dorsum/tongue_vs_tongue.tre")
+tongue.tree <- read.tree("fasttree_all_seed_OTUs.tre")
 original.tongue.cheek.data <- read.table("../data/tongue_dorsum_vs_buccal_mucosa/hmp_tongue_cheek_data.txt",sep="\t",check.names=FALSE,quote="",comment.char="", header=TRUE,row.names=1)
 tongue.cheek.tree <- read.tree("../data/tongue_dorsum_vs_buccal_mucosa/hmp_tongue_cheek_subtree.tre")
 
@@ -47,8 +48,15 @@ tongue.tree <- midpoint(tongue.tree)
 tongue.cheek.tree <- midpoint(tongue.cheek.tree)
 
 # tongue and cheek data have more read counts per sample, so we're rarefying to the lowest number of per sample counts in tongue only data
-d.tongue.data <- rrarefy(original.tongue.data, min(apply(original.tongue.data,1,sum)))
-e.tongue.data <- rrarefy(original.tongue.data, min(apply(original.tongue.data,1,sum)))
+# d.tongue.data <- rrarefy(original.tongue.data, min(apply(original.tongue.data,1,sum)))
+# e.tongue.data <- rrarefy(original.tongue.data, min(apply(original.tongue.data,1,sum)))
+
+d.tongue.data <- read.table("A_otu_table_tab_r659_original.txt",sep="\t",quote="",header=TRUE,row.names=1,check.names=FALSE)
+e.tongue.data <- read.table("B_otu_table_tab_r659_original.txt",sep="\t",quote="",header=TRUE,row.names=1,check.names=FALSE)
+
+d.tongue.data <- t(d.tongue.data)
+e.tongue.data <- t(e.tongue.data)
+
 d.tongue.cheek.data <- rrarefy(original.tongue.cheek.data, min(apply(original.tongue.data,1,sum)))
 e.tongue.cheek.data <- rrarefy(original.tongue.cheek.data, min(apply(original.tongue.data,1,sum)))
 
@@ -85,10 +93,18 @@ if (length(absent) != 0) {
 }
 
 
-d.tongue.unifrac <- getDistanceMatrix(d.tongue.data,d.tongue.tree,method="unweighted",verbose=TRUE)
-e.tongue.unifrac <- getDistanceMatrix(e.tongue.data,e.tongue.tree,method="unweighted",verbose=TRUE)
-d.tongue.cheek.unifrac <- getDistanceMatrix(d.tongue.cheek.data,d.tongue.cheek.tree,method="unweighted",verbose=TRUE)
-e.tongue.cheek.unifrac <- getDistanceMatrix(e.tongue.cheek.data,e.tongue.cheek.tree,method="unweighted",verbose=TRUE)
+d.tongue.unifrac <- getDistanceMatrix(d.tongue.data,d.tongue.tree,method="unweighted",verbose=TRUE,pruneTree=TRUE)
+e.tongue.unifrac <- getDistanceMatrix(e.tongue.data,e.tongue.tree,method="unweighted",verbose=TRUE,pruneTree=TRUE)
+d.tongue.cheek.unifrac <- getDistanceMatrix(d.tongue.cheek.data,d.tongue.cheek.tree,method="unweighted",verbose=TRUE,pruneTree=TRUE)
+e.tongue.cheek.unifrac <- getDistanceMatrix(e.tongue.cheek.data,e.tongue.cheek.tree,method="unweighted",verbose=TRUE,pruneTree=TRUE)
+
+# d.tongue.unifrac.no.normalize <- getDistanceMatrix(d.tongue.data,d.tongue.tree,method="unweighted",verbose=TRUE,pruneTree=TRUE,normalize=FALSE)
+# e.tongue.unifrac.no.normalize <- getDistanceMatrix(e.tongue.data,e.tongue.tree,method="unweighted",verbose=TRUE,pruneTree=TRUE,normalize=FALSE)
+# d.tongue.cheek.unifrac.no.normalize <- getDistanceMatrix(d.tongue.cheek.data,d.tongue.cheek.tree,method="unweighted",verbose=TRUE,pruneTree=TRUE,normalize=FALSE)
+# e.tongue.cheek.unifrac.no.normalize <- getDistanceMatrix(e.tongue.cheek.data,e.tongue.cheek.tree,method="unweighted",verbose=TRUE,pruneTree=TRUE,normalize=FALSE)
+
+# qiime.d <- read.table("~/Desktop/A_unweighted_unifrac_dm.txt",sep="\t",header=TRUE,quote="",row.names=1,check.names=FALSE)
+# qiime.e <- read.table("~/Desktop/B_unweighted_unifrac_dm.txt",sep="\t",header=TRUE,quote="",row.names=1,check.names=FALSE)
 
 d.tongue <- pcoa(d.tongue.unifrac)
 e.tongue <- pcoa(e.tongue.unifrac)

@@ -1,0 +1,87 @@
+Loading required package: permute
+Loading required package: lattice
+This is vegan 2.3-3
+Loading required package: ape
+
+Attaching package: ‘phangorn’
+
+The following objects are masked from ‘package:vegan’:
+
+    diversity, treedist
+
+[1] "Right Cluster to Left Cluster Movement: "
+[1] "700016379"
+[1] "Right Cluster to Left Cluster Movement: "
+[1] "700107552"
+[1] "Right Cluster to Left Cluster Movement: "
+[1] "700107999"
+[1] "Right Cluster to Left Cluster Movement: "
+[1] "700109179"
+[1] "Left Cluster to Right Cluster Movement: "
+[1] "700108101"
+[1] "Left Cluster to Right Cluster Movement: "
+[1] "700108845"
+[1] "Right Cluster to Left Cluster Movement: "
+[1] "td_700114709"
+[1] "Right Cluster to Left Cluster Movement: "
+[1] "700016908"
+[1] "Right Cluster to Left Cluster Movement: "
+[1] "700107195"
+[1] "Right Cluster to Left Cluster Movement: "
+[1] "700109179"
+[1] "Right Cluster to Left Cluster Movement: "
+[1] "700015720"
+[1] "Right Cluster to Left Cluster Movement: "
+[1] "700107552"
+[1] "Right Cluster to Left Cluster Movement: "
+[1] "700109179"
+[1] "Left Cluster to Right Cluster Movement: "
+[1] "700107999"
+[1] "Left Cluster to Right Cluster Movement: "
+[1] "700108845"
+[1] "Right Cluster to Left Cluster Movement: "
+[1] "bm_700024343"
+[1] "Left Cluster to Right Cluster Movement: "
+[1] "td_700107381"
+[1] "Right Cluster to Left Cluster Movement: "
+[1] "700106933"
+[1] "Left Cluster to Right Cluster Movement: "
+[1] "700108845"
+[1] "Right Cluster to Left Cluster Movement: "
+[1] "td_700021683"
+[1] "Right Cluster to Left Cluster Movement: "
+[1] "700106933"
+[1] "Left Cluster to Right Cluster Movement: "
+[1] "700014971"
+[1] "Left Cluster to Right Cluster Movement: "
+[1] "700015070"
+[1] "Left Cluster to Right Cluster Movement: "
+[1] "700016782"
+[1] "Right Cluster to Left Cluster Movement: "
+[1] "td_700021683"
+[1] "Left Cluster to Right Cluster Movement: "
+[1] "bm_700024400"
+[1] "Right Cluster to Left Cluster Movement: "
+[1] "700014409"
+[1] "Right Cluster to Left Cluster Movement: "
+[1] "700015070"
+[1] "Right Cluster to Left Cluster Movement: "
+[1] "700015442"
+[1] "Right Cluster to Left Cluster Movement: "
+[1] "700016782"
+[1] "Right Cluster to Left Cluster Movement: "
+[1] "700107552"
+[1] "Right Cluster to Left Cluster Movement: "
+[1] "700107999"
+[1] "Left Cluster to Right Cluster Movement: "
+[1] "700016346"
+[1] "Left Cluster to Right Cluster Movement: "
+[1] "700107381"
+[1] "Left Cluster to Right Cluster Movement: "
+[1] "700108845"
+Warning message:
+In procrustes(d$vectors, e$vectors) :
+  X has fewer axes than Y: X adjusted to comform Y
+
+null device 
+          1 
