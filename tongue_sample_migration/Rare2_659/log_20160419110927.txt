@@ -1,0 +1,89 @@
+Logging started at 11:09:27 on 19 Apr 2016
+QIIME version: 1.8.0
+
+qiime_config values:
+sc_queue	all.q
+pynast_template_alignment_fp	/macqiime/greengenes/core_set_aligned.fasta.imputed
+cluster_jobs_fp	/macqiime/QIIME/bin/start_parallel_jobs.py
+assign_taxonomy_reference_seqs_fp	/macqiime/greengenes/gg_13_8_otus/rep_set/97_otus.fasta
+torque_queue	friendlyq
+template_alignment_lanemask_fp	/macqiime/greengenes/lanemask_in_1s_and_0s
+jobs_to_start	1
+cloud_environment	False
+qiime_scripts_dir	/macqiime/QIIME/bin/
+denoiser_min_per_core	50
+working_dir	/tmp/
+python_exe_fp	/macqiime/bin/python
+temp_dir	/tmp/
+blastall_fp	blastall
+seconds_to_sleep	60
+assign_taxonomy_id_to_taxonomy_fp	/macqiime/greengenes/gg_13_8_otus/taxonomy/97_otu_taxonomy.txt
+
+parameter file values:
+parallel:jobs_to_start	1
+
+Input file md5 sums:
+otu_t_B.biom: 314c43a56640e6dd1d10d9d1b1467d9e
+metadata_tongue_vs_tongue_30.txt: a9d5fd7c5c7c62dad36dfa044e071b3c
+fasttree_all_seed_OTUs.tre: 8ea9ef4914b18376bf58cf4b55ec8091
+
+Executing commands.
+
+# Beta Diversity (weighted_unifrac) command 
+/macqiime/bin/python /macqiime/QIIME/bin//beta_diversity.py -i otu_t_B.biom -o Rare2_659 --metrics weighted_unifrac  -t fasttree_all_seed_OTUs.tre 
+
+Stdout:
+
+Stderr:
+
+# Rename distance matrix (weighted_unifrac) command 
+mv Rare2_659/weighted_unifrac_otu_t_B.txt Rare2_659/weighted_unifrac_dm.txt
+
+Stdout:
+
+Stderr:
+
+# Principal coordinates (weighted_unifrac) command 
+/macqiime/bin/python /macqiime/QIIME/bin//principal_coordinates.py -i Rare2_659/weighted_unifrac_dm.txt -o Rare2_659/weighted_unifrac_pc.txt 
+
+Stdout:
+
+Stderr:
+
+# Make emperor plots, weighted_unifrac) command 
+make_emperor.py -i Rare2_659/weighted_unifrac_pc.txt -o Rare2_659/weighted_unifrac_emperor_pcoa_plot/ -m metadata_tongue_vs_tongue_30.txt 
+
+Stdout:
+
+Stderr:
+
+# Beta Diversity (unweighted_unifrac) command 
+/macqiime/bin/python /macqiime/QIIME/bin//beta_diversity.py -i otu_t_B.biom -o Rare2_659 --metrics unweighted_unifrac  -t fasttree_all_seed_OTUs.tre 
+
+Stdout:
+
+Stderr:
+
+# Rename distance matrix (unweighted_unifrac) command 
+mv Rare2_659/unweighted_unifrac_otu_t_B.txt Rare2_659/unweighted_unifrac_dm.txt
+
+Stdout:
+
+Stderr:
+
+# Principal coordinates (unweighted_unifrac) command 
+/macqiime/bin/python /macqiime/QIIME/bin//principal_coordinates.py -i Rare2_659/unweighted_unifrac_dm.txt -o Rare2_659/unweighted_unifrac_pc.txt 
+
+Stdout:
+
+Stderr:
+
+# Make emperor plots, unweighted_unifrac) command 
+make_emperor.py -i Rare2_659/unweighted_unifrac_pc.txt -o Rare2_659/unweighted_unifrac_emperor_pcoa_plot/ -m metadata_tongue_vs_tongue_30.txt 
+
+Stdout:
+
+Stderr:
+
+
+Logging stopped at 11:09:30 on 19 Apr 2016
