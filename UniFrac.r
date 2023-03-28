@@ -208,7 +208,6 @@ getDistanceMatrix <- function(otuTable,tree,method="weighted",verbose=FALSE,prun
 	colnames(otu.prop) <- colnames(otuTable)
 	if(verbose) {	print("calculated proportional abundance")	}
 
-if(bayes_zero){
 	# add priors to zeros based on bayesian approach
 	otuTable.adjustedZeros <- cmultRepl(otuTable, method="CZM", output="p-counts")
   # make any negative numbers as close to zero as possible - this is probably due to a precision error.
@@ -218,10 +217,7 @@ if(bayes_zero){
   otu.prop.adjustedZeros <- as.matrix(otu.prop.adjustedZeros)
 	rownames(otu.prop.adjustedZeros) <- rownames(otuTable)
 	colnames(otu.prop.adjustedZeros) <- colnames(otuTable)
-}else{
-  otu.prop.adjustedZeros = otu.prop
-}
-	
+
 	##get cumulative proportional abundance for the nodes (nodes are ordered same as in the phylo tree representation)
 
   otuPropsPerNode <- matrix(NA, ncol=length(tree$edge.length)+1, nrow=length(rownames(otuTable)))
