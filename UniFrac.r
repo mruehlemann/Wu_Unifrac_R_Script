@@ -176,7 +176,7 @@ calculateDistanceMatrix <- function(weights, method, otuTable, verbose, pruneTre
 #otuTable must have samples as rows, OTUs as columns
 #tree must be phylo tree object from ape package (can use read.tree method to read in a newick tree to this format)
 
-getDistanceMatrix <- function(otuTable,tree,method="weighted",verbose=FALSE,pruneTree=FALSE,normalize=TRUE)  {
+getDistanceMatrix <- function(otuTable,tree,method="weighted",verbose=FALSE,pruneTree=FALSE,normalize=TRUE, bayes_zero=FALSE)  {
 
 	if (length(which(is.na(otuTable))) > 0) {
 		stop("OTU count table has NA")
@@ -208,8 +208,9 @@ getDistanceMatrix <- function(otuTable,tree,method="weighted",verbose=FALSE,prun
 	colnames(otu.prop) <- colnames(otuTable)
 	if(verbose) {	print("calculated proportional abundance")	}
 
+if(bayes_zero){
 	# add priors to zeros based on bayesian approach
-	otuTable.adjustedZeros <- cmultRepl(otuTable, method="CZM", output="counts")
+	otuTable.adjustedZeros <- cmultRepl(otuTable, method="CZM", output="p-counts")
   # make any negative numbers as close to zero as possible - this is probably due to a precision error.
   otuTable.adjustedZeros <- apply(otuTable.adjustedZeros,2,function(x) { x[which(x < 0)] <- .Machine$double.eps; return(x) })
   readsPerSample <- apply(otuTable.adjustedZeros,1,sum)
@@ -217,7 +218,10 @@ getDistanceMatrix <- function(otuTable,tree,method="weighted",verbose=FALSE,prun
   otu.prop.adjustedZeros <- as.matrix(otu.prop.adjustedZeros)
 	rownames(otu.prop.adjustedZeros) <- rownames(otuTable)
 	colnames(otu.prop.adjustedZeros) <- colnames(otuTable)
-  
+}else{
+  otu.prop.adjustedZeros = otu.prop
+}
+	
 	##get cumulative proportional abundance for the nodes (nodes are ordered same as in the phylo tree representation)
 
   otuPropsPerNode <- matrix(NA, ncol=length(tree$edge.length)+1, nrow=length(rownames(otuTable)))
